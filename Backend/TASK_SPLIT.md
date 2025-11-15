@@ -404,19 +404,22 @@ class HeartRegionMapper:
 
 ---
 
-#### 2. LLM Medical Interpreter (4 hours)
-**Goal:** Use Claude API to generate natural language explanations
+#### 2. Clinical Decision Support LLM (4 hours) ✅ COMPLETED
+**Goal:** Use Claude API to provide clinical decision support for expert physicians
+
+**Note:** Refactored from `llm_medical_interpreter.py` to `clinical_decision_support_llm.py` to focus on doctor-facing clinical guidance rather than patient education.
 
 **Tasks:**
-- [ ] Create `Backend/llm_medical_interpreter.py`
+- [x] Create `Backend/clinical_decision_support_llm.py`
   - Set up Anthropic Claude API client
-  - Build structured prompts
+  - Build structured prompts for clinical experts
   - Parse JSON responses
-  - Implement fallback hardcoded explanations
+  - Implement fallback clinical guidance
+  - Support dual output modes (clinical_expert + patient_education)
 
 **Interface:**
 ```python
-class LLMMedicalInterpreter:
+class ClinicalDecisionSupportLLM:
     def __init__(self, api_key=None):
         """
         Args:
@@ -424,10 +427,48 @@ class LLMMedicalInterpreter:
         """
         pass
 
-    def interpret_ecg_analysis(self, predictions_dict, heart_rate_data,
-                                region_health, top_condition, confidence):
+    def analyze(self, predictions_dict, heart_rate_data, region_health,
+                top_condition, confidence, output_mode='clinical_expert'):
         """
-        Returns:
+        Args:
+            output_mode: 'clinical_expert' (default) or 'patient_education' (legacy)
+
+        Returns (clinical_expert mode):
+            {
+                'differential_diagnosis': {
+                    'primary_diagnosis': str,
+                    'alternative_diagnoses': [str],
+                    'reasoning': str,
+                    'probability_interpretation': str
+                },
+                'risk_assessment': {
+                    'urgency': 'immediate|urgent|routine',
+                    'stroke_risk': str,
+                    'sudden_death_risk': str,
+                    'progression_risk': str,
+                    'risk_factors': [str]
+                },
+                'clinical_correlations': {...},
+                'recommended_workup': {
+                    'immediate_tests': [str],
+                    'follow_up_tests': [str],
+                    'specialist_referrals': [str],
+                    'imaging': [str]
+                },
+                'treatment_considerations': {...},
+                'vr_visualization_strategy': {
+                    'primary_view': str,
+                    'regions_to_emphasize': [str],
+                    'animation_recommendations': str,
+                    'comparison_views': [str],
+                    'teaching_points': [str],
+                    'interactive_elements': [str]
+                },
+                'literature_references': {...},
+                'critical_alerts': [str]
+            }
+
+        Returns (patient_education mode - legacy):
             {
                 'plain_english_summary': str,
                 'severity_assessment': {...},
@@ -436,6 +477,11 @@ class LLMMedicalInterpreter:
                 'visualization_suggestions': {...}
             }
         """
+        pass
+
+    # Legacy method for backward compatibility
+    def interpret_ecg_analysis(self, ...):
+        # Calls analyze() with output_mode='patient_education'
         pass
 ```
 
@@ -449,7 +495,9 @@ pip install anthropic
 export ANTHROPIC_API_KEY=sk-ant-...
 ```
 
-**Reference:** See `dummy_data/sample_*.json` `llm_interpretation` field
+**Reference:**
+- Clinical expert mode: See `dummy_data/sample_clinical_expert_rbbb.json`
+- Patient education mode: See `dummy_data/sample_rbbb.json` `llm_interpretation` field
 
 ---
 
@@ -465,10 +513,10 @@ export ANTHROPIC_API_KEY=sk-ant-...
 ```python
 # In ecg_api.py
 from heart_region_mapper import HeartRegionMapper
-from llm_medical_interpreter import LLMMedicalInterpreter
+from clinical_decision_support_llm import ClinicalDecisionSupportLLM
 
 region_mapper = HeartRegionMapper()
-llm_interpreter = LLMMedicalInterpreter()
+clinical_llm = ClinicalDecisionSupportLLM()
 
 @app.route('/api/ecg/analyze', methods=['POST'])
 def analyze_ecg():
@@ -478,9 +526,11 @@ def analyze_ecg():
     region_health = region_mapper.get_region_health_status(predictions_dict)
     activation_sequence = region_mapper.get_activation_sequence(region_health)
 
-    llm_interpretation = llm_interpreter.interpret_ecg_analysis(
+    # Use clinical expert mode (doctor-focused)
+    llm_interpretation = clinical_llm.analyze(
         predictions_dict, heart_rate_data, region_health,
-        top_condition, confidence
+        top_condition, confidence,
+        output_mode='clinical_expert'  # or 'patient_education' for legacy
     )
 
     # ... return response ...
