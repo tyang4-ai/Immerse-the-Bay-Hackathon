@@ -56,14 +56,29 @@ These abnormalities are not mutually exclusive and the probabilities outputs of 
 
 ## Folder content
 
-- The main model used along the paper is the one named `model.hdf5`. 
+- **The main model used along the paper is the one named `model.hdf5`.** ✅ **INCLUDED IN GITHUB**
+  - This is the only model needed for the HoloHuman XR hackathon project
+  - Size: 25.8 MB (under GitHub's 100MB limit)
+  - This is the production model used for ECG analysis
 
 - In order to show the stability of the method we also train 10 different neural networks
 with the same architecture and configuration but with different
-initial seeds. These models are saved as `other_seeds/model_[1-10].hdf5`. The main 
-model `model.hdf5` correspond to  `other_seeds/model_6.hdf5` which is the one with 
+initial seeds. These models are saved as `other_seeds/model_[1-10].hdf5`. The main
+model `model.hdf5` correspond to  `other_seeds/model_6.hdf5` which is the one with
 micro average precision imediatly above the median value.
+  - **NOT INCLUDED IN GITHUB** (too large: 10 × 25.8 MB = 258 MB)
+  - Download from Zenodo if needed: https://zenodo.org/record/4916206
 
 - Finally, to assess the effect of how we structure our problem, we have considered alternative
-scenarios where we use 90\%-5\%-5\% splits, stratified randomly, by patient or in chronological order. 
+scenarios where we use 90\%-5\%-5\% splits, stratified randomly, by patient or in chronological order.
 The models trained in these scenarios are saved in the folder `other_splits/`.
+  - **NOT INCLUDED IN GITHUB** (too large: 3 × 25.8 MB = 77 MB)
+  - Download from Zenodo if needed: https://zenodo.org/record/4916206
+
+---
+
+## For HoloHuman XR Hackathon
+
+**You only need `model.hdf5`** - already included in this repository!
+
+The other models (`other_seeds/` and `other_splits/`) are for research purposes only and are not required for the hackathon project.

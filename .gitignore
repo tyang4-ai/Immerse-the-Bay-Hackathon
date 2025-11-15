@@ -120,6 +120,10 @@ Thumbs.db
 # EXCEPTION: Include the pre-trained ECG model (25.8 MB, under GitHub limit)
 !Backend/model/model.hdf5
 
+# Exclude alternative model versions (too large: 335 MB total)
+Backend/model/other_seeds/
+Backend/model/other_splits/
+
 # Data
 *.dicom
 *.dcm
