@@ -6,20 +6,17 @@ import time
 from model_loader import ECGModelLoader
 from ecg_heartrate_analyzer import ECGHeartRateAnalyzer
 
-# TODO: Import teammate's modules when ready
-# from heart_region_mapper import HeartRegionMapper
-# from llm_medical_interpreter import LLMMedicalInterpreter
+from heart_region_mapper import HeartRegionMapper
+from llm_medical_interpreter import LLMMedicalInterpreter
 
 app = Flask(__name__)
 CORS(app)
 
-# Initialize your modules
 ecg_model = ECGModelLoader()
 hr_analyzer = ECGHeartRateAnalyzer(sampling_rate=400)
 
-# TODO: Initialize teammate's modules
-# region_mapper = HeartRegionMapper()
-# llm_interpreter = LLMMedicalInterpreter()
+region_mapper = HeartRegionMapper()
+llm_interpreter = LLMMedicalInterpreter()
 
 def initialize():
     print("Initializing backend...")
@@ -51,21 +48,22 @@ def analyze_ecg():
                 'error': f'Invalid shape {ecg_signal.shape}, expected (4096, 12)'
             }), 400
 
-        # === YOUR PART ===
-        # 1. ECG Model Predictions
         predictions_dict = ecg_model.predict(ecg_signal)
         top_condition, confidence = ecg_model.get_top_condition(predictions_dict)
 
-        # 2. Heart Rate Analysis
         heart_rate_data = hr_analyzer.analyze(ecg_signal)
 
-        # === TEAMMATE'S PART (Placeholder) ===
-        # 3. Region Health Mapping
-        region_health = {}  # TODO: Call region_mapper.get_region_health_status(predictions_dict)
-        activation_sequence = []  # TODO: Call region_mapper.get_activation_sequence(region_health)
+        region_health = region_mapper.get_region_health_status(predictions_dict)
+        activation_sequence = region_mapper.get_activation_sequence(region_health)
 
         # 4. LLM Interpretation
-        llm_interpretation = {}  # TODO: Call llm_interpreter.interpret_ecg_analysis(...)
+        llm_interpretation = llm_interpreter.interpret_ecg_analysis(
+            predictions_dict,
+            heart_rate_data,
+            region_health,
+            top_condition,
+            confidence
+        )
 
         # === RESPONSE ===
         processing_time_ms = (time.time() - start_time) * 1000
