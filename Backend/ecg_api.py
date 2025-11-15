@@ -7,7 +7,7 @@ from model_loader import ECGModelLoader
 from ecg_heartrate_analyzer import ECGHeartRateAnalyzer
 
 from heart_region_mapper import HeartRegionMapper
-from llm_medical_interpreter import LLMMedicalInterpreter
+from clinical_decision_support_llm import ClinicalDecisionSupportLLM
 
 app = Flask(__name__)
 CORS(app)
@@ -16,7 +16,7 @@ ecg_model = ECGModelLoader()
 hr_analyzer = ECGHeartRateAnalyzer(sampling_rate=400)
 
 region_mapper = HeartRegionMapper()
-llm_interpreter = LLMMedicalInterpreter()
+clinical_llm = ClinicalDecisionSupportLLM()
 
 def initialize():
     print("Initializing backend...")
@@ -56,13 +56,14 @@ def analyze_ecg():
         region_health = region_mapper.get_region_health_status(predictions_dict)
         activation_sequence = region_mapper.get_activation_sequence(region_health)
 
-        # 4. LLM Interpretation
-        llm_interpretation = llm_interpreter.interpret_ecg_analysis(
+        # 4. Clinical Decision Support (Doctor-focused)
+        llm_interpretation = clinical_llm.analyze(
             predictions_dict,
             heart_rate_data,
             region_health,
             top_condition,
-            confidence
+            confidence,
+            output_mode='clinical_expert'  # Use clinical expert mode for doctors
         )
 
         # === RESPONSE ===
