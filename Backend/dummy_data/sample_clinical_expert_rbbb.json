@@ -1,0 +1,235 @@
+{
+  "predictions": {
+    "1st_degree_AV_block": 0.08,
+    "RBBB": 0.89,
+    "LBBB": 0.02,
+    "sinus_bradycardia": 0.12,
+    "atrial_fibrillation": 0.05,
+    "sinus_tachycardia": 0.18
+  },
+  "heart_rate": {
+    "bpm": 95.2,
+    "rr_intervals_ms": [630.4, 631.0, 629.8, 630.5, 631.2, 630.1, 630.7, 629.9, 631.5],
+    "beat_timestamps": [0.35, 0.98, 1.61, 2.24, 2.87, 3.50, 4.13, 4.76, 5.39, 6.02, 6.65, 7.28, 7.91, 8.54, 9.17, 9.80],
+    "r_peak_count": 16
+  },
+  "region_health": {
+    "sa_node": {
+      "severity": 0.18,
+      "color": [0.72, 1.0, 0.0],
+      "activation_delay_ms": 0,
+      "affected_by": ["sinus_tachycardia"]
+    },
+    "ra": {
+      "severity": 0.036,
+      "color": [0.144, 1.0, 0.0],
+      "activation_delay_ms": 20,
+      "affected_by": ["sinus_tachycardia"]
+    },
+    "la": {
+      "severity": 0.036,
+      "color": [0.144, 1.0, 0.0],
+      "activation_delay_ms": 24,
+      "affected_by": ["sinus_tachycardia"]
+    },
+    "av_node": {
+      "severity": 0.048,
+      "color": [0.192, 1.0, 0.0],
+      "activation_delay_ms": 50,
+      "affected_by": ["1st_degree_AV_block"]
+    },
+    "bundle_his": {
+      "severity": 0.024,
+      "color": [0.096, 1.0, 0.0],
+      "activation_delay_ms": 150,
+      "affected_by": ["1st_degree_AV_block"]
+    },
+    "rbbb": {
+      "severity": 0.89,
+      "color": [1.0, 0.0, 0.0],
+      "activation_delay_ms": 320,
+      "affected_by": ["RBBB"]
+    },
+    "lbbb": {
+      "severity": 0.02,
+      "color": [0.08, 1.0, 0.0],
+      "activation_delay_ms": 160,
+      "affected_by": ["LBBB"]
+    },
+    "purkinje": {
+      "severity": 0.356,
+      "color": [1.0, 0.576, 0.0],
+      "activation_delay_ms": 234,
+      "affected_by": ["RBBB"]
+    },
+    "rv": {
+      "severity": 0.623,
+      "color": [1.0, 0.247, 0.0],
+      "activation_delay_ms": 360,
+      "affected_by": ["RBBB"]
+    },
+    "lv": {
+      "severity": 0.014,
+      "color": [0.056, 1.0, 0.0],
+      "activation_delay_ms": 200,
+      "affected_by": ["LBBB"]
+    }
+  },
+  "activation_sequence": [
+    ["sa_node", 0],
+    ["ra", 20],
+    ["la", 24],
+    ["av_node", 50],
+    ["bundle_his", 150],
+    ["lbbb", 160],
+    ["lv", 200],
+    ["purkinje", 234],
+    ["rbbb", 320],
+    ["rv", 360]
+  ],
+  "llm_interpretation": {
+    "differential_diagnosis": {
+      "primary_diagnosis": "Isolated right bundle branch block (RBBB)",
+      "alternative_diagnoses": [
+        "RBBB with right ventricular hypertrophy (if R' in V1 >15mm)",
+        "Brugada syndrome (requires ST elevation assessment in V1-V3)",
+        "Arrhythmogenic right ventricular cardiomyopathy (if epsilon waves present)"
+      ],
+      "reasoning": "89% confidence for RBBB with marked QRS prolongation (~160ms) and characteristic rSR' pattern. The 18% sinus tachycardia probability (HR 95 BPM) may represent a compensatory response to reduced cardiac output from dyssynchronous ventricular contraction. Low probabilities for LBBB (2%) and significant AV block (8%) effectively rule out bifascicular block, making isolated RBBB the most likely diagnosis.",
+      "probability_interpretation": "High confidence (89%) indicates unambiguous ECG findings for RBBB. The concurrent mild sinus tachycardia (18%) is clinically significant and warrants investigation for underlying causes such as anxiety, pain, dehydration, or hemodynamic compensation. The 8% probability of first-degree AV block suggests borderline PR interval prolongation - serial monitoring recommended if this increases."
+    },
+    "risk_assessment": {
+      "urgency": "routine",
+      "stroke_risk": "Not elevated (no atrial fibrillation detected)",
+      "sudden_death_risk": "Low in isolated RBBB without structural heart disease. Risk increases significantly if associated with Brugada pattern (coved ST elevation ≥2mm in V1-V3) or ARVC (T-wave inversions V1-V3, epsilon waves). Recommend obtaining full 12-lead ECG for detailed morphology assessment.",
+      "progression_risk": "5-10% risk of progression to complete heart block over 10 years. Risk substantially higher (12% over 5 years) if first-degree AV block develops concurrently. Framingham data shows RBBB prevalence increases with age (0.8% general population, 11% >80 years), with most cases remaining benign.",
+      "risk_factors": [
+        "Right heart strain (pulmonary hypertension, acute/chronic pulmonary embolism)",
+        "Congenital heart disease (atrial septal defect, Tetralogy of Fallot repair)",
+        "Age-related conduction system fibrosis (most common in elderly)",
+        "Right ventricular myocardial infarction",
+        "Cardiomyopathy (dilated, hypertrophic, or ARVC)"
+      ]
+    },
+    "clinical_correlations": {
+      "expected_symptoms": [
+        "Often asymptomatic (60-70% of isolated RBBB cases)",
+        "Possible palpitations if sinus tachycardia is persistent",
+        "Exertional dyspnea if underlying RV dysfunction present",
+        "Fatigue from reduced cardiac output in severe cases"
+      ],
+      "red_flags": [
+        "Syncope or pre-syncope (suggests high-grade AV block or ventricular arrhythmia)",
+        "Chest pain with dynamic ECG changes (consider acute coronary syndrome)",
+        "Progressive dyspnea (evaluate for heart failure, pulmonary hypertension)",
+        "Family history of sudden cardiac death (screen for Brugada syndrome, ARVC)",
+        "New-onset RBBB in young patient (<40 years) warrants thorough investigation"
+      ],
+      "age_considerations": "RBBB prevalence increases with age. In patients <40 years, consider congenital heart disease (especially if lifelong history) or inherited arrhythmia syndromes. In elderly patients (>70 years), age-related fibrosis is most likely, but still exclude structural disease with echocardiography.",
+      "medication_effects": "Review medications for QT-prolonging agents (risk of torsades with prolonged QRS). Beta-blockers or calcium channel blockers may contribute to sinus bradycardia component (12% probability). Avoid Class IC antiarrhythmics (flecainide, propafenone) as they can further slow conduction and are contraindicated in structural heart disease."
+    },
+    "recommended_workup": {
+      "immediate_tests": [
+        "None required if patient hemodynamically stable and asymptomatic",
+        "If chest pain or dyspnea: Troponin, BNP, D-dimer (rule out MI, heart failure, PE)"
+      ],
+      "follow_up_tests": [
+        "Transthoracic echocardiogram to assess RV size, function (TAPSE, S'), and pulmonary pressures (essential if new-onset RBBB or symptoms present)",
+        "Complete metabolic panel and TSH (rule out electrolyte abnormalities, thyroid disease)",
+        "Comparison with prior ECGs to determine chronicity (new vs. old RBBB has vastly different implications)",
+        "24-hour Holter monitor if palpitations or suspected arrhythmia",
+        "Exercise stress test if exertional symptoms present (assess chronotropic competence and provoke ischemia)"
+      ],
+      "specialist_referrals": [
+        "Cardiology for new-onset RBBB or if symptoms present",
+        "Electrophysiology if syncope, family history of sudden death, or concern for Brugada/ARVC",
+        "Pulmonology if signs of pulmonary hypertension (elevated JVP, loud P2, peripheral edema)"
+      ],
+      "imaging": [
+        "Echocardiogram: Focus on RV systolic function (TAPSE >17mm normal, S' >9.5 cm/s normal), RV size (RV:LV ratio <1.0 normal), tricuspid regurgitation velocity (estimate RVSP), and exclude structural disease",
+        "Consider cardiac MRI if ARVC suspected (RV wall motion abnormalities, fatty infiltration, fibrosis on late gadolinium enhancement)",
+        "CT pulmonary angiography if PE suspected based on clinical probability and D-dimer"
+      ]
+    },
+    "treatment_considerations": {
+      "medications_to_consider": [
+        "None specifically for isolated RBBB (no pharmacologic treatment improves conduction)",
+        "Treat underlying cause: Diuretics if RV failure, anticoagulation if PE diagnosed",
+        "Beta-blockers may worsen conduction delay - use cautiously and monitor PR/QRS intervals",
+        "If concurrent hypertension: ACE inhibitors or ARBs are safe first-line agents"
+      ],
+      "medications_to_avoid": [
+        "Class IC antiarrhythmics (flecainide, propafenone): Can exacerbate conduction delay, contraindicated if structural heart disease",
+        "Class IA antiarrhythmics (quinidine, procainamide, disopyramide): Prolong QRS, increase proarrhythmic risk",
+        "High-dose beta-blockers or calcium channel blockers: May precipitate symptomatic bradycardia if AV nodal disease coexists",
+        "Avoid multiple AV nodal blocking agents simultaneously (beta-blocker + diltiazem/verapamil)"
+      ],
+      "device_therapy": "Isolated RBBB is NOT an indication for pacemaker (Class III recommendation per 2018 ACC/AHA/HRS guidelines). Consider pacing only if: (1) Symptomatic bradycardia unresponsive to reversible causes, (2) High-grade or complete AV block develops, (3) Alternating bundle branch block, or (4) Bifascicular block with syncope after EP study confirms infra-Hisian block. Cardiac resynchronization therapy (CRT) may be considered if patient develops heart failure with LVEF ≤35% and QRS ≥150ms (though LBBB morphology has stronger evidence for CRT benefit than RBBB).",
+      "procedural_options": [
+        "Generally none required for isolated RBBB",
+        "If Brugada syndrome confirmed: ICD implantation for primary prevention if high-risk features present (spontaneous type 1 pattern, family history of SCD, prior syncope)",
+        "If ARVC confirmed: ICD for primary or secondary prevention depending on risk stratification"
+      ]
+    },
+    "vr_visualization_strategy": {
+      "primary_view": "electrical_pathway",
+      "regions_to_emphasize": [
+        "rbbb",
+        "rv",
+        "interventricular_septum",
+        "purkinje"
+      ],
+      "animation_recommendations": "Create a slow-motion animation (0.5x speed recommended) showing the complete cardiac electrical cycle with emphasis on the abnormal RBBB conduction pattern. Animation sequence: (1) SA node fires at t=0ms (small yellow pulse), (2) Both atria activate synchronously at t=20-24ms (gentle blue wave), (3) AV node depolarizes at t=50ms with subtle delay visualization (small orange glow), (4) Bundle of His conducts at t=150ms, (5) LEFT bundle and left ventricle activate NORMALLY at t=160-200ms (green wave spreading across LV), (6) RIGHT bundle shows BLOCKED pathway at t=320ms (red X or barrier symbol), (7) Electrical signal spreads slowly through interventricular septum (yellow dotted line traversing septum, t=200-320ms), (8) Right ventricle finally activates at t=360ms (deep red wave, 160ms AFTER LV). Add a millisecond counter overlay and side-by-side comparison with normal conduction. Use color gradient from green (normal) → yellow (mild delay) → orange (moderate delay) → red (severe delay) to show the 160ms dyssynchrony. Optional: Include ECG trace overlay showing the wide QRS complex with rSR' morphology in V1 synchronized with the 3D animation.",
+      "comparison_views": [
+        "Split-screen: Normal sequential ventricular activation (left panel) vs. RBBB dyssynchronous activation (right panel)",
+        "Toggle overlay: Superimpose normal activation timing in transparent blue to highlight the 160ms RV delay",
+        "Before/after: If prior ECG available, show transition from normal conduction to RBBB",
+        "Educational mode: Pause animation at key timepoints (t=0, 50, 200, 320, 360ms) with explanatory callouts"
+      ],
+      "teaching_points": [
+        "Point to right bundle branch and explain why complete block causes 160ms delay (vs. normal 0ms from bundle to RV)",
+        "Demonstrate how the electrical impulse takes a 'detour' through the interventricular septum (slow cell-to-cell conduction vs. rapid Purkinje fiber conduction)",
+        "Show why this creates the characteristic wide QRS complex (>120ms) on surface ECG",
+        "Explain why RBBB causes a distinctive 'M-shaped' or 'rabbit ears' (rSR') pattern in lead V1 (terminal R wave from delayed RV activation)",
+        "Illustrate the mechanical consequence: RV contracts 160ms after LV, creating dyssynchronous contraction (show with pulsing ventricle animations)",
+        "Emphasize that isolated RBBB without symptoms typically requires no treatment - it's a 'finding' not a 'disease'"
+      ],
+      "interactive_elements": [
+        "Toggle normal vs. RBBB conduction: Allow user to switch between normal and pathological activation with a button press",
+        "Adjustable animation speed: Slider from 0.25x to 2.0x speed (default 0.5x for teaching)",
+        "Region highlighting on click: Click rbbb → show 89% severity score, 320ms delay, and clinical significance popup",
+        "ECG correlation overlay: Display synchronized 12-lead ECG trace with V1 lead highlighted showing rSR' pattern",
+        "Timeline scrubber: Drag timeline to any point in activation sequence (0-360ms) to examine static activation at specific timepoints",
+        "Measurement tools: Allow measurement of activation delays between regions (e.g., LV to RV delay = 360ms - 200ms = 160ms)",
+        "Quiz mode: Hide severity colors, ask user to identify most affected regions based on activation timing"
+      ]
+    },
+    "literature_references": {
+      "guidelines": [
+        "2018 ACC/AHA/HRS Guideline on the Evaluation and Management of Patients With Bradycardia and Cardiac Conduction Delay: RBBB alone (without AV block or symptoms) does not require pacing (Class III recommendation, Level of Evidence B)",
+        "2021 ESC Guidelines on cardiac pacing and CRT: Echocardiography recommended for new-onset RBBB to assess for structural heart disease (Class I recommendation)",
+        "2013 ACC/AHA STEMI Guidelines: New or presumably new LBBB in setting of chest pain is STEMI-equivalent, but RBBB requires Sgarbossa criteria or clinical correlation"
+      ],
+      "evidence": [
+        "Framingham Heart Study: RBBB prevalence 0.8% in general population, increases to 11.3% in adults >80 years. Isolated RBBB associated with increased cardiovascular mortality (HR 1.3-1.5) but not sudden cardiac death.",
+        "Bussink et al., Circulation 2013: Right bundle branch block and long-term risk of sudden death - 30-year follow-up study showing isolated RBBB confers modest increased risk only if concurrent structural disease present.",
+        "Kusumoto et al., 2018 ACC/AHA/HRS Guideline: Bifascicular block (RBBB + left fascicular block) with syncope warrants EP study; prophylactic pacing considered only if HV interval ≥70ms or infra-Hisian block demonstrated.",
+        "Meta-analysis (NEJM 2023): RBBB combined with first-degree AV block (PR >200ms) has 3.2x increased risk of requiring permanent pacemaker within 5 years compared to isolated RBBB."
+      ],
+      "clinical_pearls": [
+        "RBBB morphology: rSR' (rabbit ears) in V1, wide slurred S wave in I, aVL, V5-V6. QRS duration typically 120-160ms.",
+        "Incomplete RBBB (QRS 100-120ms) has even lower clinical significance - often normal variant in young adults.",
+        "New RBBB in acute MI: Suggests large infarct involving septum/RV with high mortality (~20%). Increased risk of complete heart block.",
+        "Brugada pattern: Type 1 Brugada requires ≥2mm coved ST elevation in ≥1 of V1-V3 AFTER QRS complex. May be unmasked by sodium channel blocker challenge (ajmaline, flecainide, procainamide).",
+        "S1Q3T3 pattern with RBBB: Classic for acute PE, but sensitivity <20%. Better to use Wells' criteria + D-dimer.",
+        "RBBB and CRT: LBBB has much stronger evidence for CRT benefit. RBBB with heart failure may benefit from CRT if QRS ≥150ms and evidence of dyssynchrony on echo, but response rates lower than LBBB."
+      ]
+    },
+    "critical_alerts": []
+  },
+  "top_condition": "RBBB",
+  "confidence": 0.89,
+  "processing_time_ms": 342.5,
+  "model_version": "1.0.0",
+  "timestamp": "2025-11-15T10:30:00Z"
+}

@@ -155,22 +155,23 @@ All pipelines → Combined JSON Response → Unity VR Frontend
 
 ```
 Backend/
-├── ecg_api.py                      # Flask routes (main entry point)
-├── model_loader.py                 # TensorFlow model wrapper
-├── ecg_heartrate_analyzer.py       # R-peak detection (Pan-Tompkins)
-├── heart_region_mapper.py          # Condition → anatomy mapping
-├── llm_medical_interpreter.py      # Claude API integration
+├── ecg_api.py                              # Flask routes (main entry point)
+├── model_loader.py                         # TensorFlow model wrapper
+├── ecg_heartrate_analyzer.py               # R-peak detection (Pan-Tompkins)
+├── heart_region_mapper.py                  # ✅ Condition → anatomy mapping
+├── clinical_decision_support_llm.py        # ✅ Claude API clinical decision support
 ├── model/
-│   └── model.hdf5                  # Pre-trained ECG weights (25.8 MB)
+│   └── model.hdf5                          # Pre-trained ECG weights (25.8 MB)
 ├── dummy_data/
-│   ├── README.md                   # Unity integration guide
-│   ├── sample_normal.json          # Healthy heart example
-│   ├── sample_rbbb.json            # Right bundle branch block
-│   ├── sample_af.json              # Atrial fibrillation
-│   └── sample_ecg_response.json    # Sinus bradycardia
-├── TASK_SPLIT.md                   # Backend developer task division
-├── README.md                       # This file
-└── requirements.txt                # Python dependencies (to be created)
+│   ├── README.md                           # Unity integration guide
+│   ├── sample_normal.json                  # Healthy heart example
+│   ├── sample_rbbb.json                    # Right bundle branch block (patient education)
+│   ├── sample_clinical_expert_rbbb.json    # ✅ RBBB (clinical expert mode)
+│   ├── sample_af.json                      # Atrial fibrillation
+│   └── sample_ecg_response.json            # Sinus bradycardia
+├── TASK_SPLIT.md                           # Backend developer task division
+├── README.md                               # This file
+└── requirements.txt                        # Python dependencies (to be created)
 ```
 
 ---
@@ -259,20 +260,21 @@ Backend/
    - Create `ecg_api.py` with endpoints
    - Set up CORS and error handling
 
-### Backend Developer 2 (Mapping + LLM)
+### Backend Developer 2 (Mapping + LLM) ✅ COMPLETED
 
 **Teammate tasks:** See [TASK_SPLIT.md](TASK_SPLIT.md)
 
-1. **Heart Region Mapper** (3 hours)
-   - Implement `heart_region_mapper.py`
-   - Condition → anatomy lookup tables
+1. **Heart Region Mapper** (3 hours) ✅
+   - Implemented `heart_region_mapper.py`
+   - Condition → anatomy lookup tables with severity/color/timing
 
-2. **LLM Integration** (4 hours)
-   - Implement `llm_medical_interpreter.py`
-   - Claude API medical interpretation
+2. **Clinical Decision Support LLM** (4 hours) ✅
+   - Implemented `clinical_decision_support_llm.py` (refactored from `llm_medical_interpreter.py`)
+   - Dual modes: clinical_expert (doctor-focused) + patient_education (legacy)
+   - See [Refactoring Rationale](#llm-refactoring-rationale) below
 
-3. **Integration** (1 hour)
-   - Connect all modules in Flask
+3. **Integration** (1 hour) ⏳
+   - Ready to connect with Dev 1's Flask API when available
 
 ### Integration Point
 
@@ -283,10 +285,86 @@ Both developers merge at `ecg_api.py`:
 from model_loader import ECGModelLoader
 from ecg_heartrate_analyzer import ECGHeartRateAnalyzer
 from heart_region_mapper import HeartRegionMapper
-from llm_medical_interpreter import LLMMedicalInterpreter
+from clinical_decision_support_llm import ClinicalDecisionSupportLLM
 
 # All pipelines combined in /api/ecg/predict endpoint
+# Use output_mode='clinical_expert' for doctor-focused guidance
 ```
+
+---
+
+## LLM Refactoring Rationale
+
+### From Patient Education to Clinical Decision Support
+
+**Original Design** (`llm_medical_interpreter.py`):
+- Targeted general patients
+- Plain English summaries
+- Patient-friendly explanations
+- Simplified severity ratings (low/moderate/high)
+
+**Refactored Design** (`clinical_decision_support_llm.py`):
+- Targeted expert physicians (cardiologists, ER doctors)
+- Technical medical terminology
+- Evidence-based clinical pathways
+- Comprehensive decision support
+
+### Why the Change?
+
+This VR application is designed for **doctors and medical professionals**, not patients. The original patient-education approach was misaligned with the target audience.
+
+### What Changed?
+
+**Clinical Expert Mode (NEW - Default)**:
+```python
+clinical_llm.analyze(..., output_mode='clinical_expert')
+```
+
+Returns:
+- **Differential diagnosis**: Alternative diagnoses to consider
+- **Risk assessment**: Urgency, stroke risk, sudden death risk
+- **Recommended workup**: Immediate tests, imaging, specialist referrals
+- **Treatment considerations**: Medications to consider/avoid, device therapy
+- **VR visualization strategy**: Specific animation recommendations for teaching
+- **Literature references**: Guidelines, evidence, clinical pearls
+- **Critical alerts**: Time-sensitive findings requiring immediate action
+
+**Patient Education Mode (LEGACY - Backward Compatible)**:
+```python
+clinical_llm.analyze(..., output_mode='patient_education')
+# OR use legacy method
+clinical_llm.interpret_ecg_analysis(...)
+```
+
+Returns original patient-friendly format for potential future use.
+
+### Example Comparison
+
+**RBBB Case - Clinical Expert Mode**:
+- "89% confidence for RBBB. The concurrent mild sinus tachycardia (18%) may represent compensatory response to reduced cardiac output from dyssynchronous ventricular contraction."
+- "Recommended workup: Transthoracic echocardiogram to assess RV size/function, BNP if dyspnea present"
+- "Avoid Class IC antiarrhythmics (flecainide, propafenone) - contraindicated if structural heart disease"
+
+**RBBB Case - Patient Education Mode** (Legacy):
+- "Right Bundle Branch Block means the electrical pathway that signals your right ventricle to contract is blocked or delayed..."
+- "This can be a normal finding in some people, but it's important to have it evaluated by a cardiologist"
+
+### VR Use Cases
+
+**Teaching Rounds**:
+- Doctor presents case to residents using VR
+- LLM provides teaching points synchronized with 3D visualization
+- Interactive elements explain pathophysiology
+
+**Diagnostic Consultation**:
+- Doctor reviews ECG findings in VR
+- LLM suggests differential diagnoses and next steps
+- Critical alerts highlighted for time-sensitive conditions
+
+**Patient Explanation** (Future):
+- After diagnosis, doctor can switch to patient education mode
+- Simplified explanations for shared decision-making
+- VR visualization helps patient understand their condition
 
 ---
 
