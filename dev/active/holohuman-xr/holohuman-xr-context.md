@@ -1,6 +1,6 @@
 # HoloHuman XR - Project Context
 
-**Last Updated:** 2025-11-15 02:00 AM
+**Last Updated:** 2025-11-15 02:15 AM
 
 ---
 
@@ -9,8 +9,11 @@
 **Name:** HoloHuman XR: Down the Rabbit Hole
 **Event:** Immerse the Bay 2025 Hackathon (Nov 14-16, 2025)
 **Team Size:** 4 people
-**Time Remaining:** ~34.25 hours (Pencils down: Sunday 9:00 AM)
+**Time Remaining:** ~34 hours (Pencils down: Sunday 9:00 AM)
 **GitHub Repository:** https://github.com/tyang4-ai/Immerse-the-Bay-Hackathon
+
+### **Key Innovation:**
+Combining **ByteDance SecureMR** medical imaging platform with **AI-powered ECG analysis** and **Meshy.ai 3D generation** for immersive medical education in VR
 
 ---
 
@@ -41,16 +44,23 @@ C:\Users\22317\Documents\Coding\Hackathon Stuff\Immerse-the-Bay-Hackathon\
 
 ## Architecture Overview
 
-### System Components
+### System Components (UPDATED with Sponsor Tools)
 
 ```
 ┌─────────────────┐
 │   Meta Quest 2  │
 │   (Unity VR)    │
-└────────┬────────┘
-         │ HTTP POST
-         │ /predict
-         ▼
+└───┬─────────┬───┘
+    │         │
+    │         │ HTTP GET /api/medical/images
+    │         ▼
+    │    ┌─────────────────┐
+    │    │  SecureMR API   │
+    │    │  (ByteDance)    │
+    │    └─────────────────┘
+    │
+    │ HTTP POST /api/ecg/predict
+    ▼
 ┌─────────────────┐
 │  Flask API      │
 │  (Python)       │
@@ -62,9 +72,18 @@ C:\Users\22317\Documents\Coding\Hackathon Stuff\Immerse-the-Bay-Hackathon\
 │  ECG Model      │
 │  (TensorFlow)   │
 └─────────────────┘
+
+External Tools:
+┌─────────────────┐
+│   Meshy.ai      │ ──> 3D Heart Model ──> Unity
+└─────────────────┘
+
+┌─────────────────┐
+│   CapCut        │ ──> Demo Video Editing
+└─────────────────┘
 ```
 
-### Technology Stack
+### Technology Stack (UPDATED)
 
 **Frontend (Unity VR)**
 - Unity 2022.3 LTS
@@ -76,23 +95,36 @@ C:\Users\22317\Documents\Coding\Hackathon Stuff\Immerse-the-Bay-Hackathon\
 
 **Backend (Python)**
 - Python 3.8+
-- Flask (web server)
-- Flask-CORS (cross-origin requests)
-- TensorFlow 2.2 (ML model)
-- Keras (model wrapper)
-- NumPy (data processing)
+- Flask + Flask-CORS
+- TensorFlow 2.2
+- Keras
+- NumPy
+- Requests (HTTP client for SecureMR)
+
+**AI/ML**
+- Pre-trained ECG model (antonior92/automatic-ecg-diagnosis)
+- **Meshy.ai** - AI 3D model generation ⭐ SPONSOR TOOL
+
+**Medical Imaging**
+- **SecureMR** (ByteDance) - Medical imaging platform ⭐ SPONSOR TOOL
+- DICOM samples (backup)
 
 **Assets**
-- 3D Models: FBX/OBJ format from Sketchfab, TurboSquid
-- Medical Images: PNG converted from DICOM
-- Audio: WAV/MP3 for heartbeat sounds
+- **3D Models:** Meshy.ai generated (primary), Z-Anatomy/TurboSquid (backup)
+- **Medical Images:** SecureMR API (primary), converted PNG (backup)
+- **Audio:** WAV/MP3 for heartbeat sounds
 
 **Development Tools**
 - Git/GitHub for version control
-- Blender for 3D model optimization
+- **CapCut** (ByteDance) - Video editing ⭐ SPONSOR TOOL
 - Postman for API testing
 - Unity Profiler for performance
 - Quest Link for fast iteration
+
+**Hardware**
+- Meta Quest 2 (primary) ⭐ SPONSOR
+- Afference rings (haptics) ⭐ SPONSOR
+- Development PC (Windows)
 
 ---
 
@@ -123,10 +155,16 @@ C:\Users\22317\Documents\Coding\Hackathon Stuff\Immerse-the-Bay-Hackathon\
 - **Trade-off:** Less unique hardware integration
 - **Impact:** Still demonstrates haptic concept, can explain Afference as future work
 
-### Decision 6: DICOM → PNG Instead of Real-time DICOM
-- **Why:** Simpler implementation, no complex library integration
-- **Trade-off:** Can't load arbitrary DICOM files
-- **Impact:** Sufficient for demo, conversion process documented
+### Decision 6: SecureMR Instead of Manual DICOM Conversion
+- **Why:** ByteDance SecureMR provides native medical imaging API
+- **Trade-off:** Depends on SecureMR availability/credentials
+- **Impact:** Professional medical platform, better demo story, sponsor integration
+- **Backup:** Manual DICOM → PNG conversion if SecureMR unavailable
+
+### Decision 7: Meshy.ai for 3D Generation
+- **Why:** AI-generated models faster than manual modeling/optimization
+- **Trade-off:** Less control over exact geometry
+- **Impact:** Saves 2-4 hours of Blender work, sponsor integration
 
 ---
 
