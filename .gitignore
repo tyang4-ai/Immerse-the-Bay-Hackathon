@@ -117,6 +117,9 @@ Thumbs.db
 *.onnx
 *.pth
 
+# EXCEPTION: Include the pre-trained ECG model (25.8 MB, under GitHub limit)
+!Backend/model/model.hdf5
+
 # Data
 *.dicom
 *.dcm
