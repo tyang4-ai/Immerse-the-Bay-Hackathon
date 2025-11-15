@@ -121,6 +121,12 @@ Thumbs.db
 *.dicom
 *.dcm
 
+# ECG test data (synthetic/generated)
+Backend/data/synthetic_ecg*.json
+Backend/data/test_ecg.json
+Backend/data/ecg_tracings_full.hdf5
+Backend/data/ecg_samples.hdf5
+
 # Temporary files
 *.tmp
 *.bak
