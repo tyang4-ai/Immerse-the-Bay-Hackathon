@@ -1,6 +1,6 @@
 # HoloHuman XR - Project Context
 
-**Last Updated:** 2025-11-15 02:15 AM
+**Last Updated:** 2025-11-15 03:30 AM
 
 ---
 
@@ -44,7 +44,7 @@ C:\Users\22317\Documents\Coding\Hackathon Stuff\Immerse-the-Bay-Hackathon\
 
 ## Architecture Overview
 
-### System Components (UPDATED with Sponsor Tools)
+### System Components (UPDATED with Advanced Features)
 
 ```
 ┌─────────────────┐
@@ -61,17 +61,24 @@ C:\Users\22317\Documents\Coding\Hackathon Stuff\Immerse-the-Bay-Hackathon\
     │
     │ HTTP POST /api/ecg/predict
     ▼
-┌─────────────────┐
-│  Flask API      │
-│  (Python)       │
-└────────┬────────┘
-         │ model.predict()
-         ▼
-┌─────────────────┐
-│  Pre-trained    │
-│  ECG Model      │
-│  (TensorFlow)   │
-└─────────────────┘
+┌─────────────────────────────────────────┐
+│  Flask API (Python)                     │
+│  ┌─────────────────────────────────┐   │
+│  │ 3 Analysis Pipelines:            │   │
+│  │ 1. TensorFlow Model              │   │
+│  │    → Condition predictions       │   │
+│  │ 2. R-Peak Detection              │   │
+│  │    → Heart rate + timing         │   │
+│  │ 3. LLM Interpretation            │   │
+│  │    → Natural language analysis   │   │
+│  └─────────────────────────────────┘   │
+└─────────────────────────────────────────┘
+         │
+         ├──> TensorFlow ECG Model (6 conditions)
+         │
+         ├──> Pan-Tompkins Algorithm (R-peak detection)
+         │
+         └──> Claude API (medical interpretation)
 
 External Tools:
 ┌─────────────────┐
@@ -99,10 +106,13 @@ External Tools:
 - TensorFlow 2.2
 - Keras
 - NumPy
+- SciPy (Pan-Tompkins R-peak detection)
+- anthropic (Claude API for LLM interpretation)
 - Requests (HTTP client for SecureMR)
 
 **AI/ML**
 - Pre-trained ECG model (antonior92/automatic-ecg-diagnosis)
+- Claude LLM API (medical interpretation and natural language generation)
 - **Meshy.ai** - AI 3D model generation ⭐ SPONSOR TOOL
 
 **Medical Imaging**
@@ -166,20 +176,35 @@ External Tools:
 - **Trade-off:** Less control over exact geometry
 - **Impact:** Saves 2-4 hours of Blender work, sponsor integration
 
+### Decision 8: Rule-Based Anatomy Mapping (Not ML)
+- **Why:** ECG model doesn't output per-region data; training new model would take 10+ hours
+- **Trade-off:** Less adaptable than ML, requires medical knowledge to create
+- **Impact:** Faster implementation, medically accurate, allows real-time color updates
+
+### Decision 9: Pan-Tompkins for R-Peak Detection
+- **Why:** Industry-standard algorithm, no training required, scipy implementation available
+- **Trade-off:** Fixed algorithm (no customization)
+- **Impact:** Reliable BPM detection, enables synchronized heartbeat animations
+
+### Decision 10: Claude LLM for Medical Interpretation
+- **Why:** Superior medical reasoning vs GPT for clinical explanations
+- **Trade-off:** Requires API key and internet connection
+- **Impact:** Natural language explanations for patients, clinical notes for doctors
+
 ---
 
 ## Integration Points
 
-### Unity ↔ Flask Communication
+### Unity ↔ Flask Communication (UPDATED with Advanced Features)
 - **Protocol:** HTTP REST API
-- **Endpoint:** `http://localhost:5000/predict`
+- **Endpoint:** `http://localhost:5000/api/ecg/predict`
 - **Request Format:**
   ```json
   {
     "ecg_signal": [[float, float, ...], ...] // 4096 samples × 12 leads
   }
   ```
-- **Response Format:**
+- **Response Format (Extended):**
   ```json
   {
     "predictions": {
@@ -190,8 +215,39 @@ External Tools:
       "atrial_fibrillation": 0.10,
       "sinus_tachycardia": 0.15
     },
+    "heart_rate": {
+      "bpm": 52.3,
+      "rr_intervals_ms": [1148.0, 1152.5, ...],
+      "beat_timestamps": [0.5, 1.65, 2.8, ...],
+      "r_peak_count": 9
+    },
+    "region_health": {
+      "sa_node": {
+        "severity": 0.5,
+        "color": [1.0, 0.65, 0.0],
+        "activation_delay_ms": 0,
+        "affected_by": ["sinus_bradycardia"]
+      },
+      // ... 9 more anatomical regions
+    },
+    "activation_sequence": [
+      ["sa_node", 0],
+      ["ra", 25],
+      ["la", 30],
+      // ... ordered by timing
+    ],
+    "llm_interpretation": {
+      "plain_english_summary": "...",
+      "severity_assessment": {...},
+      "patient_explanation": "...",
+      "clinical_notes": "...",
+      "visualization_suggestions": {...}
+    },
     "top_condition": "sinus_bradycardia",
-    "confidence": 0.78
+    "confidence": 0.78,
+    "processing_time_ms": 187.3,
+    "model_version": "1.0.0",
+    "timestamp": "2025-11-15T03:30:00Z"
   }
   ```
 
@@ -230,8 +286,11 @@ External Tools:
 tensorflow==2.2
 keras
 numpy
+scipy
+anthropic
 flask
 flask-cors
+requests
 ```
 
 ---
@@ -403,12 +462,26 @@ flask-cors
 - ✅ Configured .gitignore for Unity + Python
 - ✅ Created professional README
 
+### Completed (Saturday 2:00 AM - 3:30 AM)
+- ✅ Researched ECG model testing and anatomy mapping
+- ✅ Designed 3 advanced features (R-peak detection, region coloring, LLM interpretation)
+- ✅ Created 4 dummy JSON files for Unity development
+- ✅ Created comprehensive dummy data README (570+ lines)
+- ✅ Split backend tasks between 2 developers (TASK_SPLIT.md)
+- ✅ Updated architecture diagrams with 3 analysis pipelines
+- ✅ Updated technology stack (scipy, anthropic)
+- ✅ Added new design decisions (anatomy mapping, Pan-Tompkins, Claude LLM)
+- ✅ Updated API contract with extended response schema
+- ✅ Created Backend README with setup instructions
+- ✅ Created comprehensive API reference documentation
+
 ### Current Session Notes
-- **Time Spent:** ~25 minutes on planning and documentation
-- **Git Configuration:** Set up local git user for repository
-- **Repository Status:** All documentation successfully pushed to main branch
-- **Commit Message:** Professional commit with Claude Code attribution
-- **Next Phase:** Ready to begin Phase 1 (Foundation Setup)
+- **Time Spent:** ~90 minutes on research, planning, and documentation
+- **Advanced Features:** R-peak detection, region health mapping, LLM interpretation
+- **Files Created:** 7 new files (4 JSON samples, 3 documentation files)
+- **Documentation Updated:** 2 files (context.md with new architecture)
+- **Backend Ready:** Complete API contract, task split, setup guide
+- **Next Phase:** Push all changes to GitHub, then begin implementation
 
 ## Next Immediate Steps
 

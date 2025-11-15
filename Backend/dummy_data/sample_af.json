@@ -1,0 +1,113 @@
+{
+  "predictions": {
+    "1st_degree_AV_block": 0.15,
+    "RBBB": 0.08,
+    "LBBB": 0.04,
+    "sinus_bradycardia": 0.03,
+    "atrial_fibrillation": 0.92,
+    "sinus_tachycardia": 0.25
+  },
+  "heart_rate": {
+    "bpm": 118.7,
+    "rr_intervals_ms": [672.3, 445.8, 589.2, 712.4, 398.5, 651.7, 523.9, 604.1, 487.3, 698.2],
+    "beat_timestamps": [0.28, 0.95, 1.40, 1.99, 2.70, 3.09, 3.75, 4.27, 4.87, 5.36, 6.06, 6.58, 7.22, 7.91, 8.60, 9.28],
+    "r_peak_count": 16
+  },
+  "region_health": {
+    "sa_node": {
+      "severity": 0.05,
+      "color": [0.2, 1.0, 0.0],
+      "activation_delay_ms": 0,
+      "affected_by": ["sinus_tachycardia"]
+    },
+    "ra": {
+      "severity": 0.8,
+      "color": [1.0, 0.0, 0.0],
+      "activation_delay_ms": 0,
+      "affected_by": ["atrial_fibrillation"]
+    },
+    "la": {
+      "severity": 0.8,
+      "color": [1.0, 0.0, 0.0],
+      "activation_delay_ms": 0,
+      "affected_by": ["atrial_fibrillation"]
+    },
+    "av_node": {
+      "severity": 0.6,
+      "color": [1.0, 0.35, 0.0],
+      "activation_delay_ms": 65,
+      "affected_by": ["atrial_fibrillation", "1st_degree_AV_block"]
+    },
+    "bundle_his": {
+      "severity": 0.045,
+      "color": [0.18, 1.0, 0.0],
+      "activation_delay_ms": 150,
+      "affected_by": ["1st_degree_AV_block"]
+    },
+    "rbbb": {
+      "severity": 0.08,
+      "color": [0.32, 1.0, 0.0],
+      "activation_delay_ms": 160,
+      "affected_by": ["RBBB"]
+    },
+    "lbbb": {
+      "severity": 0.04,
+      "color": [0.16, 1.0, 0.0],
+      "activation_delay_ms": 160,
+      "affected_by": ["LBBB"]
+    },
+    "purkinje": {
+      "severity": 0.032,
+      "color": [0.128, 1.0, 0.0],
+      "activation_delay_ms": 180,
+      "affected_by": ["RBBB"]
+    },
+    "rv": {
+      "severity": 0.056,
+      "color": [0.224, 1.0, 0.0],
+      "activation_delay_ms": 200,
+      "affected_by": ["RBBB"]
+    },
+    "lv": {
+      "severity": 0.028,
+      "color": [0.112, 1.0, 0.0],
+      "activation_delay_ms": 200,
+      "affected_by": ["LBBB"]
+    }
+  },
+  "activation_sequence": [
+    ["sa_node", 0],
+    ["ra", 0],
+    ["la", 0],
+    ["av_node", 65],
+    ["bundle_his", 150],
+    ["rbbb", 160],
+    ["lbbb", 160],
+    ["purkinje", 180],
+    ["rv", 200],
+    ["lv", 200]
+  ],
+  "llm_interpretation": {
+    "plain_english_summary": "Atrial fibrillation detected - the upper chambers of your heart are beating irregularly and chaotically instead of in a coordinated rhythm.",
+    "severity_assessment": {
+      "overall": "high",
+      "regions": {
+        "most_affected_region": "ra",
+        "severity_explanation": "Both atria show high severity (80%) with completely chaotic electrical activity. The irregular rhythm creates highly variable R-R intervals (from 398ms to 712ms), indicating the AV node is receiving random signals from the fibrillating atria."
+      }
+    },
+    "patient_explanation": "Atrial Fibrillation (AFib) is a common but serious heart rhythm disorder where the upper chambers of your heart (atria) quiver rapidly and irregularly instead of contracting normally. Your heart rate is fast and irregular (averaging 119 BPM with beats varying wildly). This irregular rhythm significantly increases your risk of stroke because blood can pool in the atria and form clots. AFib requires immediate medical attention. Treatment typically involves medications to control heart rate and blood thinners to prevent stroke. Many people with AFib live normal lives with proper management, but it's crucial to work with a cardiologist. You should seek medical care soon if you haven't already.",
+    "clinical_notes": "ECG findings: Atrial fibrillation with rapid ventricular response (average 119 BPM). Irregularly irregular rhythm with R-R interval variability of 314ms (range: 398-712ms). No discernible P waves. AV node shows variable conduction. Possible first-degree AV block component (15% probability). CHA2DS2-VASc score needed for stroke risk stratification. Recommendations: (1) Rate control with beta-blockers or calcium channel blockers, (2) Anticoagulation per CHA2DS2-VASc score, (3) Cardiology referral for rhythm control strategy assessment, (4) Echocardiogram to assess LA size and LV function, (5) Consider cardioversion if new-onset, (6) Screen for thyroid disease and electrolyte abnormalities.",
+    "visualization_suggestions": {
+      "highlight_regions": ["ra", "la", "av_node"],
+      "recommended_view": "atrial_focus",
+      "animation_speed": "fast",
+      "color_emphasis": "Both atria should be deep red/magenta with a chaotic, flickering animation to represent fibrillation waves rather than organized contraction. The irregular nature is critical - show multiple random electrical wavelets swirling through both atria. The AV node should be orange/yellow showing it's stressed by the chaotic input. Animate the ventricles contracting at irregular intervals to visualize the 'irregularly irregular' pattern characteristic of AFib."
+    }
+  },
+  "top_condition": "atrial_fibrillation",
+  "confidence": 0.92,
+  "processing_time_ms": 398.2,
+  "model_version": "1.0.0",
+  "timestamp": "2025-11-15T03:30:00Z"
+}
