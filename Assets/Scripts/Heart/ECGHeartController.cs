@@ -20,6 +20,7 @@ public class ECGHeartController : MonoBehaviour
     [Header("Heart Visualization")]
     [SerializeField] private HeartRegionMapping regionMapping;
     [SerializeField] private ElectricalWaveAnimator waveAnimator;
+    [SerializeField] private ECGColorGlowAnimator colorGlowAnimator;
 
     [Header("UI Elements")]
     [SerializeField] private TMPro.TextMeshProUGUI diagnosisText;
@@ -146,6 +147,19 @@ public class ECGHeartController : MonoBehaviour
 
                 // Update heart rate UI
                 UpdateHeartRate(response.heart_rate);
+
+                // Start ECG color/glow visualization with actual waveform
+                if (colorGlowAnimator != null && ecgSignal != null)
+                {
+                    // Play ECG waveform visualization
+                    colorGlowAnimator.PlayECGVisualization(ecgSignal, leadIndex: 1); // Lead II
+
+                    // Highlight beats with flash effect
+                    if (response.heart_rate.beat_timestamps != null && response.heart_rate.beat_timestamps.Count > 0)
+                    {
+                        colorGlowAnimator.HighlightBeats(response.heart_rate.beat_timestamps);
+                    }
+                }
 
                 // Update region colors based on health data
                 UpdateRegionVisualization(response.region_health);
