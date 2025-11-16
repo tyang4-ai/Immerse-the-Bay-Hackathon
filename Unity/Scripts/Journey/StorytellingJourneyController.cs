@@ -352,22 +352,5 @@ public class StorytellingJourneyController : MonoBehaviour
     }
 }
 
-/// <summary>
-/// Storytelling response structure (matches backend)
-/// </summary>
-[System.Serializable]
-public class StorytellingResponse
-{
-    public string narrative_text;
-    public List<WaypointData> waypoints;
-}
-
-/// <summary>
-/// Waypoint data structure (matches backend)
-/// </summary>
-[System.Serializable]
-public class WaypointData
-{
-    public string region_name;  // "rbbb", "sa_node", etc.
-    public string teaser_text;  // "Right Bundle Branch: Delayed activation detected"
-}
+// StorytellingResponse and WaypointData classes are now defined in ECGDataStructures.cs
+// (removed duplicate definitions)

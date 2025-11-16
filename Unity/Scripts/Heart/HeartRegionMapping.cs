@@ -250,14 +250,5 @@ public class HeartRegionMapping : MonoBehaviour
     }
 }
 
-/// <summary>
-/// Region health data structure (matches backend response)
-/// </summary>
-[System.Serializable]
-public class RegionHealthData
-{
-    public float severity;           // 0.0 = healthy, 1.0 = critical
-    public float[] color;            // RGB array [R, G, B]
-    public float activation_delay_ms; // Activation timing in milliseconds
-    public string[] affected_by;     // List of conditions affecting this region
-}
+// RegionHealthData class is now defined in ECGDataStructures.cs
+// (removed duplicate definition)
