@@ -339,6 +339,15 @@ public class ECGHeartController : MonoBehaviour
 
         UpdateStatus("Ready", Color.white);
     }
+
+    /// <summary>
+    /// Get ECG signal data for other components (e.g., StorytellingJourneyController)
+    /// </summary>
+    /// <returns>ECG signal array (4096 samples × 12 leads) or null if not loaded</returns>
+    public float[,] GetECGSignal()
+    {
+        return ecgSignal;
+    }
 }
 
 // ECGDataWrapper and ECGData classes are now defined in ECGDataStructures.cs

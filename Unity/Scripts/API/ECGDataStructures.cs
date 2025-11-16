@@ -75,6 +75,8 @@ public class BeatsResponse
     public float avg_rr_interval_ms;       // Average RR interval in milliseconds
     public float heart_rate_bpm;           // Calculated heart rate
     public string lead_used;               // Lead used for detection
+    public string rhythm;                  // Rhythm classification (e.g., "regular", "irregular")
+    public float lead_quality;             // Lead quality score (0.0-1.0)
 }
 
 // ============================================================================
@@ -260,6 +262,7 @@ public class CacheStats
 public class ErrorResponse
 {
     public string error;                   // Error message
+    public string error_id;                // Error ID for debugging
     public string request_id;              // Request ID for debugging
     public int status_code;                // HTTP status code
 }
