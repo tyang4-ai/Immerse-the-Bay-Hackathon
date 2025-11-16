@@ -160,6 +160,41 @@ The type 'WaypointData' already exists in both...
 - Unity/Scripts/Heart/HeartRegionMapping.cs (removed RegionHealthData)
 - Unity/Scripts/Journey/StorytellingJourneyController.cs (removed StorytellingResponse, WaypointData)
 
+### Issue 3: Missing GetECGSignal() Method
+**Error Message (error_002.png):**
+```
+'ECGHeartController' does not contain a definition for 'GetECGSignal'
+```
+
+**Root Cause:** StorytellingJourneyController.cs line 68 calls `heartController.GetECGSignal()` but method doesn't exist
+
+**Solution:** Added public getter method to ECGHeartController.cs (line 347-350):
+```csharp
+public float[,] GetECGSignal()
+{
+    return ecgSignal;
+}
+```
+
+**Files Modified:** Unity/Scripts/Heart/ECGHeartController.cs
+
+### Issue 4: Missing Properties in API Response Classes
+**Error Messages (error_002.png):**
+```
+'BeatsResponse' does not contain a definition for 'rhythm'
+'BeatsResponse' does not contain a definition for 'lead_quality'
+'ErrorResponse' does not contain a definition for 'error_id'
+```
+
+**Root Cause:** ECGAPIClient.cs references properties that don't exist in data structures
+
+**Solution:** Added missing properties to ECGDataStructures.cs:
+- BeatsResponse.rhythm (line 78) - Rhythm classification string
+- BeatsResponse.lead_quality (line 79) - Lead quality score 0.0-1.0
+- ErrorResponse.error_id (line 265) - Error ID for debugging
+
+**Files Modified:** Unity/Scripts/API/ECGDataStructures.cs
+
 ---
 
 ## Unfinished Work
@@ -186,7 +221,12 @@ All tasks for Unity integration scripts are complete:
 1. **abf977e** - Add complete Unity-backend integration scripts (6 scripts)
 2. **9f93838** - Add comprehensive Unity documentation (4 docs)
 3. **93bd94a** - Add missing ECG data structure definitions
-4. **6b0aeb4** - Fix duplicate class definition errors (LATEST)
+4. **6b0aeb4** - Fix duplicate class definition errors
+5. **8a7a30f** - Save session state before PC restart
+6. **24125d6** - Remove duplicate definitions from ECGHeartController and ECGAPIClient
+7. **e327fac** - Add SegmentResponse class to ECGDataStructures
+8. **1d6d0b2** - Fix duplicate ECGData in ECGDemoController
+9. **ed88da3** - Fix missing method and properties in Unity scripts (LATEST)
 
 All commits pushed to `main` branch successfully.
 
@@ -369,9 +409,10 @@ lv.localPosition = new Vector3(-0.05f, -0.06f, 0.02f);       // Left ventricle
 - Backend fully functional
 
 ### User Can Safely Restart:
-- Everything saved to GitHub (commit 6b0aeb4)
+- Everything saved to GitHub (commit ed88da3)
 - No uncommitted critical changes
 - Documentation complete
+- All compilation errors fixed
 - Ready for Unity scene setup phase
 
 ---
