@@ -148,6 +148,35 @@ public class SegmentAnalysisResponse
     public List<string> arrhythmias;       // Detected arrhythmias
 }
 
+/// <summary>
+/// Alternative SegmentResponse structure (used by ECGAPIClient)
+/// </summary>
+[Serializable]
+public class SegmentResponse
+{
+    public Segment segment;
+    public float processing_time_ms;
+}
+
+[Serializable]
+public class Segment
+{
+    public float start_ms;
+    public float end_ms;
+    public float duration_ms;
+    public int beats_in_segment;
+    public string rhythm_analysis;
+    public List<Event> events;
+    public string lead_used;
+}
+
+[Serializable]
+public class Event
+{
+    public string type;
+    public float time_ms;
+}
+
 // ============================================================================
 // STORYTELLING RESPONSE
 // ============================================================================
