@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 
 /// <summary>
 /// Controls VR storytelling journey mode
@@ -62,7 +63,7 @@ public class StorytellingJourneyController : MonoBehaviour
     public void StartJourney()
     {
         // Get ECG data from ECGHeartController
-        ECGHeartController heartController = FindObjectOfType<ECGHeartController>();
+        ECGHeartController heartController = FindFirstObjectByType<ECGHeartController>();
         if (heartController != null)
         {
             ecgSignal = heartController.GetECGSignal();
@@ -110,7 +111,7 @@ public class StorytellingJourneyController : MonoBehaviour
         yield return apiClient.AnalyzeECG(
             ecgSignal,
             outputMode: "storytelling",
-            focusRegion: focusRegion,
+            regionFocus: focusRegion,
             onSuccess: (response) =>
             {
                 currentStory = response.storytelling;

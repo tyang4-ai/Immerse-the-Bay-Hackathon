@@ -168,8 +168,8 @@ public class ECGAPIClient : MonoBehaviour
 
                     if (logRequests)
                     {
-                        Debug.Log($"[ECG API] Detected {response.beat_count} beats ({response.rhythm})");
-                        Debug.Log($"[ECG API] Lead used: {response.lead_used} (quality: {response.lead_quality:F2})");
+                        Debug.Log($"[ECG API] Detected {response.beat_count} beats");
+                        Debug.Log($"[ECG API] Lead used: {response.lead_used}, HR: {response.heart_rate_bpm:F1} BPM");
                     }
 
                     onSuccess?.Invoke(response);
@@ -311,8 +311,8 @@ public class ECGAPIClient : MonoBehaviour
         try
         {
             var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(request.downloadHandler.text);
-            Debug.LogError($"[ECG API] Error {errorResponse.error_id}: {errorResponse.error}");
-            onError?.Invoke($"[{errorResponse.error_id}] {errorResponse.error}");
+            Debug.LogError($"[ECG API] Error: {errorResponse.error}");
+            onError?.Invoke(errorResponse.error);
         }
         catch
         {

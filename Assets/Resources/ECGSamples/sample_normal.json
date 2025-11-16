@@ -1,0 +1,113 @@
+{
+  "predictions": {
+    "1st_degree_AV_block": 0.02,
+    "RBBB": 0.03,
+    "LBBB": 0.01,
+    "sinus_bradycardia": 0.05,
+    "atrial_fibrillation": 0.02,
+    "sinus_tachycardia": 0.04
+  },
+  "heart_rate": {
+    "bpm": 72.5,
+    "rr_intervals_ms": [827.6, 828.2, 826.9, 828.0, 827.4, 828.1, 827.8, 826.5, 828.3],
+    "beat_timestamps": [0.4, 1.23, 2.06, 2.88, 3.71, 4.54, 5.37, 6.19, 7.02, 7.85, 8.68, 9.51],
+    "r_peak_count": 12
+  },
+  "region_health": {
+    "sa_node": {
+      "severity": 0.0,
+      "color": [0.0, 1.0, 0.0],
+      "activation_delay_ms": 0,
+      "affected_by": []
+    },
+    "ra": {
+      "severity": 0.0,
+      "color": [0.0, 1.0, 0.0],
+      "activation_delay_ms": 25,
+      "affected_by": []
+    },
+    "la": {
+      "severity": 0.0,
+      "color": [0.0, 1.0, 0.0],
+      "activation_delay_ms": 30,
+      "affected_by": []
+    },
+    "av_node": {
+      "severity": 0.0,
+      "color": [0.0, 1.0, 0.0],
+      "activation_delay_ms": 50,
+      "affected_by": []
+    },
+    "bundle_his": {
+      "severity": 0.0,
+      "color": [0.0, 1.0, 0.0],
+      "activation_delay_ms": 150,
+      "affected_by": []
+    },
+    "rbbb": {
+      "severity": 0.0,
+      "color": [0.0, 1.0, 0.0],
+      "activation_delay_ms": 160,
+      "affected_by": []
+    },
+    "lbbb": {
+      "severity": 0.0,
+      "color": [0.0, 1.0, 0.0],
+      "activation_delay_ms": 160,
+      "affected_by": []
+    },
+    "purkinje": {
+      "severity": 0.0,
+      "color": [0.0, 1.0, 0.0],
+      "activation_delay_ms": 180,
+      "affected_by": []
+    },
+    "rv": {
+      "severity": 0.0,
+      "color": [0.0, 1.0, 0.0],
+      "activation_delay_ms": 200,
+      "affected_by": []
+    },
+    "lv": {
+      "severity": 0.0,
+      "color": [0.0, 1.0, 0.0],
+      "activation_delay_ms": 200,
+      "affected_by": []
+    }
+  },
+  "activation_sequence": [
+    ["sa_node", 0],
+    ["ra", 25],
+    ["la", 30],
+    ["av_node", 50],
+    ["bundle_his", 150],
+    ["rbbb", 160],
+    ["lbbb", 160],
+    ["purkinje", 180],
+    ["rv", 200],
+    ["lv", 200]
+  ],
+  "llm_interpretation": {
+    "plain_english_summary": "Normal sinus rhythm with healthy electrical conduction throughout the heart.",
+    "severity_assessment": {
+      "overall": "low",
+      "regions": {
+        "most_affected_region": "none",
+        "severity_explanation": "All regions show normal electrical activity. No abnormalities detected."
+      }
+    },
+    "patient_explanation": "Great news! Your ECG shows a normal sinus rhythm at 72 beats per minute. This means your heart's electrical system is functioning exactly as it should. The SA node (your heart's natural pacemaker) is firing at a healthy rate, and the electrical signal is traveling normally through all parts of your heart. There are no signs of heart blocks, arrhythmias, or conduction delays. This is what a healthy heart rhythm looks like!",
+    "clinical_notes": "ECG findings: Normal sinus rhythm. Rate: 72 BPM. PR interval: normal. QRS duration: normal. No ST-segment abnormalities. No evidence of bundle branch blocks, AV blocks, or atrial fibrillation. Assessment: Unremarkable ECG within normal limits.",
+    "visualization_suggestions": {
+      "highlight_regions": [],
+      "recommended_view": "frontal",
+      "animation_speed": "normal",
+      "color_emphasis": "All regions should be displayed in healthy green. Show smooth electrical activation wave from SA node through atria to ventricles."
+    }
+  },
+  "top_condition": "normal",
+  "confidence": 0.95,
+  "processing_time_ms": 187.3,
+  "model_version": "1.0.0",
+  "timestamp": "2025-11-15T03:30:00Z"
+}

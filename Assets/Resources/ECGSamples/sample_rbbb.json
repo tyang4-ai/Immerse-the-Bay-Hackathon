@@ -1,0 +1,113 @@
+{
+  "predictions": {
+    "1st_degree_AV_block": 0.08,
+    "RBBB": 0.89,
+    "LBBB": 0.02,
+    "sinus_bradycardia": 0.12,
+    "atrial_fibrillation": 0.05,
+    "sinus_tachycardia": 0.18
+  },
+  "heart_rate": {
+    "bpm": 95.2,
+    "rr_intervals_ms": [630.4, 631.0, 629.8, 630.5, 631.2, 630.1, 630.7, 629.9, 631.5],
+    "beat_timestamps": [0.35, 0.98, 1.61, 2.24, 2.87, 3.50, 4.13, 4.76, 5.39, 6.02, 6.65, 7.28, 7.91, 8.54, 9.17, 9.80],
+    "r_peak_count": 16
+  },
+  "region_health": {
+    "sa_node": {
+      "severity": 0.18,
+      "color": [0.72, 1.0, 0.0],
+      "activation_delay_ms": 0,
+      "affected_by": ["sinus_tachycardia"]
+    },
+    "ra": {
+      "severity": 0.036,
+      "color": [0.144, 1.0, 0.0],
+      "activation_delay_ms": 20,
+      "affected_by": ["sinus_tachycardia"]
+    },
+    "la": {
+      "severity": 0.036,
+      "color": [0.144, 1.0, 0.0],
+      "activation_delay_ms": 24,
+      "affected_by": ["sinus_tachycardia"]
+    },
+    "av_node": {
+      "severity": 0.048,
+      "color": [0.192, 1.0, 0.0],
+      "activation_delay_ms": 50,
+      "affected_by": ["1st_degree_AV_block"]
+    },
+    "bundle_his": {
+      "severity": 0.024,
+      "color": [0.096, 1.0, 0.0],
+      "activation_delay_ms": 150,
+      "affected_by": ["1st_degree_AV_block"]
+    },
+    "rbbb": {
+      "severity": 0.89,
+      "color": [1.0, 0.0, 0.0],
+      "activation_delay_ms": 320,
+      "affected_by": ["RBBB"]
+    },
+    "lbbb": {
+      "severity": 0.02,
+      "color": [0.08, 1.0, 0.0],
+      "activation_delay_ms": 160,
+      "affected_by": ["LBBB"]
+    },
+    "purkinje": {
+      "severity": 0.356,
+      "color": [1.0, 0.576, 0.0],
+      "activation_delay_ms": 234,
+      "affected_by": ["RBBB"]
+    },
+    "rv": {
+      "severity": 0.623,
+      "color": [1.0, 0.247, 0.0],
+      "activation_delay_ms": 360,
+      "affected_by": ["RBBB"]
+    },
+    "lv": {
+      "severity": 0.014,
+      "color": [0.056, 1.0, 0.0],
+      "activation_delay_ms": 200,
+      "affected_by": ["LBBB"]
+    }
+  },
+  "activation_sequence": [
+    ["sa_node", 0],
+    ["ra", 20],
+    ["la", 24],
+    ["av_node", 50],
+    ["bundle_his", 150],
+    ["lbbb", 160],
+    ["lv", 200],
+    ["purkinje", 234],
+    ["rbbb", 320],
+    ["rv", 360]
+  ],
+  "llm_interpretation": {
+    "plain_english_summary": "Right bundle branch block detected - the electrical signal to your right ventricle is significantly delayed.",
+    "severity_assessment": {
+      "overall": "moderate",
+      "regions": {
+        "most_affected_region": "rbbb",
+        "severity_explanation": "The right bundle branch shows high severity (89% probability) with marked conduction delay (320ms vs normal 160ms). This causes the right ventricle to contract ~160ms after the left ventricle."
+      }
+    },
+    "patient_explanation": "Right Bundle Branch Block (RBBB) means the electrical pathway that signals your right ventricle to contract is blocked or delayed. Instead of both ventricles contracting together, your left ventricle contracts first, and then the signal slowly spreads to activate the right ventricle. This creates a distinctive widened pattern on the ECG. RBBB can be a normal finding in some people, but it's important to have it evaluated by a cardiologist, especially if it's new or you have symptoms like shortness of breath or chest pain. Your heart is also beating slightly faster than normal (95 BPM), which could be due to stress, exercise, or the heart compensating for the conduction delay.",
+    "clinical_notes": "ECG findings: Complete right bundle branch block (RBBB) with QRS duration approximately 160ms. Right ventricular activation delay of ~160ms beyond normal. Sinus tachycardia at 95 BPM. Possible first-degree AV block (low probability). Recommendation: Clinical correlation, echocardiogram to assess RV function, rule out pulmonary hypertension or structural heart disease. If new-onset RBBB, consider cardiology referral.",
+    "visualization_suggestions": {
+      "highlight_regions": ["rbbb", "rv", "purkinje"],
+      "recommended_view": "electrical_pathway",
+      "animation_speed": "normal",
+      "color_emphasis": "Emphasize the right bundle branch and right ventricle in red/orange to show severe conduction delay. Animate the activation sequence to clearly show the delay - left ventricle activates first (green), then significant pause, then right ventricle activates (red). This visual representation helps understand the asynchronous ventricular contraction."
+    }
+  },
+  "top_condition": "RBBB",
+  "confidence": 0.89,
+  "processing_time_ms": 312.8,
+  "model_version": "1.0.0",
+  "timestamp": "2025-11-15T03:30:00Z"
+}

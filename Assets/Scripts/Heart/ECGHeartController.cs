@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 
 /// <summary>
 /// Main controller orchestrating ECG analysis and heart visualization
@@ -339,6 +340,15 @@ public class ECGHeartController : MonoBehaviour
 
         UpdateStatus("Ready", Color.white);
     }
+    /// <summary>
+    /// Get the loaded ECG signal data
+    /// Used by other controllers (e.g., StorytellingJourneyController) to access ECG data
+    /// </summary>
+    public float[,] GetECGSignal()
+    {
+        return ecgSignal;
+    }
+
 }
 
 // ECGDataWrapper and ECGData classes are now defined in ECGDataStructures.cs
