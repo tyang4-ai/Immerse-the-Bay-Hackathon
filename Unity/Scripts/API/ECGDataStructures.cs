@@ -294,6 +294,15 @@ public class ECGDataWrapper
 }
 
 /// <summary>
+/// Alternative wrapper name (ECGWrapper) for compatibility
+/// </summary>
+[Serializable]
+public class ECGWrapper
+{
+    public ECGData data;
+}
+
+/// <summary>
 /// ECG signal data structure
 /// Contains 4096 samples × 12 leads
 /// </summary>

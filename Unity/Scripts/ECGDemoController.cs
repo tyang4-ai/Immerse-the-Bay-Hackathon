@@ -81,14 +81,5 @@ public class ECGDemoController : MonoBehaviour
     }
 }
 
-[System.Serializable]
-public class ECGWrapper
-{
-    public ECGData data;
-}
-
-[System.Serializable]
-public class ECGData
-{
-    public List<List<float>> ecg_signal;
-}
+// ECGWrapper and ECGData classes are now defined in ECGDataStructures.cs
+// (removed duplicate definitions)
