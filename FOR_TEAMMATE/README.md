@@ -4,6 +4,8 @@
 
 Everything is ready for you to add the ECG heart model to your VR scene.
 
+**NEW:** Heart now pulses with color and glow based on actual ECG waveform! 🫀✨
+
 ---
 
 ## 🚀 Super Quick Start (3 Steps)
@@ -22,6 +24,8 @@ git checkout teammate-integration
 - `Assets/Scripts/ECGDemoController.cs`
 - `Assets/Scripts/API/ECGDataStructures.cs`
 - `Assets/Scripts/Heart/ECGHeartController.cs`
+- `Assets/Scripts/Heart/ECGColorGlowAnimator.cs` ⭐ **NEW - Color/Glow effect**
+- `Assets/Scripts/Heart/HeartbeatPulseAnimator.cs` (optional - scale pulsing)
 - `Assets/Scripts/Journey/StorytellingJourneyController.cs`
 
 **ECG Sample Data** → Copy to `YourProject/Assets/Resources/ECGSamples/`:
@@ -52,14 +56,23 @@ You should see: `* Running on http://127.0.0.1:5000`
 2. Select it → Add Component → ECGAPIClient
 3. In Inspector: Backend URL = `http://localhost:5000`
 
+**D. Add Color/Glow Effect (NEW!):**
+1. Select your heart model in scene
+2. Add Component → `ECGColorGlowAnimator`
+3. Enable Emission on your heart's material (check "Emission" box)
+4. Select ECGHeartController GameObject
+5. Drag heart model to "Color Glow Animator" field
+
 **Done! Press Play to test.**
 
 ---
 
 ## 📖 Need More Details?
 
+- **ECG-COLOR-GLOW-SETUP.md** ⭐ **NEW - Color/Glow setup guide**
 - **QUICK-START.md** - Step-by-step with screenshots
 - **INTEGRATION-GUIDE.md** - Full documentation with all options
+- **Scripts/** - All the scripts you need (ready to copy)
 
 ---
 
@@ -70,7 +83,14 @@ You should see: `* Running on http://127.0.0.1:5000`
 [ECG API] Backend is healthy! Model loaded: True
 [ECG API] Analysis complete: LBBB (5%)
 Heart Rate: 72.3 BPM
+[ECGColorGlow] Started ECG visualization on Lead 1  ⭐ NEW
 ```
+
+**Your Heart Model:**
+- Pulses from dark red → bright yellow
+- Glows with orange emission
+- Flashes at each heartbeat
+- Synchronized with actual ECG waveform!
 
 ---
 
