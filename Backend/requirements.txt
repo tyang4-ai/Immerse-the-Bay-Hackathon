@@ -1,0 +1,44 @@
+# HoloHuman XR Backend - Python Dependencies
+# Immerse the Bay 2025 Hackathon
+# Last Updated: 2025-11-15
+
+# Core Web Framework
+flask==3.0.0
+flask-cors==4.0.0
+werkzeug==3.0.1
+
+# Machine Learning & Scientific Computing
+tensorflow==2.20.0
+numpy==1.24.3
+scipy==1.11.4
+
+# LLM Integration
+anthropic==0.39.0
+
+# Utilities
+requests==2.31.0
+
+# Development & Testing (optional - comment out for production)
+pytest==7.4.3
+pytest-cov==4.1.0
+
+# Installation Instructions:
+# 1. Create virtual environment:
+#    python -m venv venv
+#
+# 2. Activate virtual environment:
+#    Windows: venv\Scripts\activate
+#    macOS/Linux: source venv/bin/activate
+#
+# 3. Install dependencies:
+#    pip install -r requirements.txt
+#
+# 4. Set environment variable:
+#    Windows: set ANTHROPIC_API_KEY=your_api_key_here
+#    macOS/Linux: export ANTHROPIC_API_KEY=your_api_key_here
+#
+# 5. Run backend server:
+#    python ecg_api.py
+#
+# Server will start at: http://localhost:5000
+# Health check endpoint: http://localhost:5000/health

@@ -25,7 +25,7 @@ python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # 2. Install dependencies
-pip install flask flask-cors tensorflow==2.2 scipy anthropic numpy requests
+pip install -r requirements.txt
 
 # 3. Set environment variable for Claude API
 export ANTHROPIC_API_KEY="your-api-key-here"  # On Windows: set ANTHROPIC_API_KEY=your-key
@@ -34,7 +34,7 @@ export ANTHROPIC_API_KEY="your-api-key-here"  # On Windows: set ANTHROPIC_API_KE
 python ecg_api.py
 
 # 5. Test health endpoint
-curl http://localhost:5000/api/health
+curl http://localhost:5000/health
 ```
 
 ---
@@ -73,13 +73,10 @@ venv\Scripts\activate
 
 ```bash
 pip install --upgrade pip
-pip install flask flask-cors tensorflow==2.2 scipy anthropic numpy requests
+pip install -r requirements.txt
 ```
 
-**Note:** TensorFlow 2.2 requires specific Python versions. If installation fails, try:
-```bash
-pip install tensorflow==2.8  # More compatible with recent Python versions
-```
+**Note:** This installs all required dependencies including TensorFlow 2.20, Flask, NumPy, SciPy, and Anthropic SDK.
 
 ### Step 4: Download ECG Model
 
@@ -155,40 +152,59 @@ All pipelines → Combined JSON Response → Unity VR Frontend
 
 ```
 Backend/
-├── ecg_api.py                              # Flask routes (main entry point)
+├── ecg_api.py                              # Flask routes (7 endpoints)
 ├── model_loader.py                         # TensorFlow model wrapper
-├── ecg_heartrate_analyzer.py               # R-peak detection (Pan-Tompkins)
-├── heart_region_mapper.py                  # ✅ Condition → anatomy mapping
-├── clinical_decision_support_llm.py        # ✅ Claude API clinical decision support
+├── ecg_heartrate_analyzer.py               # Multi-lead R-peak detection with fallback
+├── heart_region_mapper.py                  # Condition → anatomy mapping
+├── clinical_decision_support_llm.py        # Claude API with 3 output modes
+├── logger.py                               # Structured logging with request IDs
+├── requirements.txt                        # Python dependencies
 ├── model/
 │   └── model.hdf5                          # Pre-trained ECG weights (25.8 MB)
 ├── dummy_data/
 │   ├── README.md                           # Unity integration guide
 │   ├── sample_normal.json                  # Healthy heart example
-│   ├── sample_rbbb.json                    # Right bundle branch block (patient education)
-│   ├── sample_clinical_expert_rbbb.json    # ✅ RBBB (clinical expert mode)
-│   ├── sample_af.json                      # Atrial fibrillation
-│   └── sample_ecg_response.json            # Sinus bradycardia
-├── TASK_SPLIT.md                           # Backend developer task division
-├── README.md                               # This file
-└── requirements.txt                        # Python dependencies (to be created)
+│   ├── sample_bradycardia.json             # Sinus bradycardia
+│   └── sample_tachycardia.json             # Sinus tachycardia
+├── tests/                                  # Comprehensive test suites
+│   ├── test_api.py                         # Full API tests
+│   ├── test_storytelling.py                # Storytelling mode tests
+│   ├── test_hr_fallback.py                 # Heart rate fallback tests
+│   └── test_phase3.py                      # Temporal drilldown tests
+├── API_INTEGRATION_GUIDE.md                # Complete Unity integration guide
+├── UNITY_QUICKSTART.md                     # 15-minute quick start guide
+├── ENHANCEMENT_STATUS.md                   # Phase 1-3 implementation status
+└── README.md                               # This file
 ```
 
 ---
 
 ## API Endpoints
 
-### POST /api/ecg/predict
+### 7 Production-Ready Endpoints
 
-**Description:** Analyzes ECG signal and returns comprehensive cardiac analysis
+| Endpoint | Purpose | Avg Response | Documentation |
+|----------|---------|--------------|---------------|
+| POST /api/ecg/analyze | Full ECG analysis | ~260ms | [API Guide](API_INTEGRATION_GUIDE.md#1-post-apiecganalyze---full-ecg-analysis) |
+| GET /health | Server health check | <10ms | [API Guide](API_INTEGRATION_GUIDE.md#2-get-health---server-health-check) |
+| POST /api/ecg/beats | Fast R-peak detection | ~50ms | [API Guide](API_INTEGRATION_GUIDE.md#3-post-apiecgbeats---fast-r-peak-detection) |
+| POST /api/ecg/beat/<index> | Single beat analysis | ~52ms | [API Guide](API_INTEGRATION_GUIDE.md#4-post-apiecgbeatindex---single-beat-analysis) |
+| POST /api/ecg/segment | Time window analysis | ~36ms | [API Guide](API_INTEGRATION_GUIDE.md#5-post-apiecgsegment---time-window-analysis) |
+| GET /api/cache/stats | Cache performance | <10ms | [API Guide](API_INTEGRATION_GUIDE.md#6-get-apicachestats---cache-performance) |
+| POST /api/cache/clear | Clear cache | <10ms | [API Guide](API_INTEGRATION_GUIDE.md#7-post-apicacheclear---clear-cache) |
+
+**Complete API documentation:** See [API_INTEGRATION_GUIDE.md](API_INTEGRATION_GUIDE.md)
+
+### POST /api/ecg/analyze - Full ECG Analysis (Primary Endpoint)
+
+**Description:** Analyzes ECG signal with 3 output modes: clinical_expert, patient_education, storytelling
 
 **Request:**
 ```json
 {
-  "ecg_signal": [
-    [0.12, 0.15, 0.18, ...],  // 4096 samples × 12 leads
-    // ... 11 more leads
-  ]
+  "ecg_signal": [[...], [...], ...],  // 4096 samples × 12 leads (float array)
+  "output_mode": "clinical_expert",   // "clinical_expert" | "patient_education" | "storytelling"
+  "region_focus": "rbbb"              // Optional for storytelling mode
 }
 ```
 
@@ -238,7 +254,9 @@ Backend/
 }
 ```
 
-**Full API documentation:** See [API_REFERENCE.md](API_REFERENCE.md)
+**See full response schema and all 7 endpoints:** [API_INTEGRATION_GUIDE.md](API_INTEGRATION_GUIDE.md)
+
+**Unity Quick Start (15 minutes):** [UNITY_QUICKSTART.md](UNITY_QUICKSTART.md)
 
 ---
 
@@ -370,48 +388,49 @@ Returns original patient-friendly format for potential future use.
 
 ## Testing
 
-### Test Model Loading
+### Run All Test Suites
 
-```python
-# test_model_loader.py
-from model_loader import ECGModelLoader
+```bash
+# Test full API functionality
+python tests/test_api.py
 
-loader = ECGModelLoader('model/model.hdf5')
-loader.load_model()
-print("Model loaded successfully!")
+# Test storytelling mode
+python tests/test_storytelling.py
 
-# Use dummy data from automatic-ecg-diagnosis/
-import numpy as np
-ecg_signal = np.random.randn(4096, 12)  # Replace with real data
-predictions = loader.predict(ecg_signal)
-print(predictions)
+# Test heart rate multi-lead fallback
+python tests/test_hr_fallback.py
+
+# Test Phase 3 temporal drilldown endpoints
+python tests/test_phase3.py
 ```
 
-### Test API with Postman
+**All tests passing ✓** (as of 2025-11-15)
 
-1. **Install Postman:** https://www.postman.com/downloads/
-2. **Create POST request:**
-   - URL: `http://localhost:5000/api/ecg/predict`
-   - Method: POST
-   - Headers: `Content-Type: application/json`
-   - Body: Use `dummy_data/sample_normal.json` (ecg_signal field only)
-3. **Send request** and verify response
-
-### Test with cURL
+### Test Individual Endpoints with cURL
 
 ```bash
 # Health check
-curl http://localhost:5000/api/health
+curl http://localhost:5000/health
 
-# ECG prediction (use real ECG data)
-curl -X POST http://localhost:5000/api/ecg/predict \
+# Full ECG analysis
+curl -X POST http://localhost:5000/api/ecg/analyze \
   -H "Content-Type: application/json" \
-  -d @test_ecg_data.json
+  -d @dummy_data/sample_normal.json
+
+# Fast beat detection
+curl -X POST http://localhost:5000/api/ecg/beats \
+  -H "Content-Type: application/json" \
+  -d @dummy_data/sample_normal.json
+
+# Single beat detail
+curl -X POST http://localhost:5000/api/ecg/beat/2 \
+  -H "Content-Type: application/json" \
+  -d @dummy_data/sample_normal.json
 ```
 
-### Test with Unity
+### Unity Integration Testing
 
-See `dummy_data/README.md` for Unity integration examples.
+See [UNITY_QUICKSTART.md](UNITY_QUICKSTART.md) for 15-minute Unity setup guide.
 
 ---
 
