@@ -200,6 +200,26 @@ public class HealthCheckResponse
     public string api_mode;                // "anthropic" or "fallback"
 }
 
+/// <summary>
+/// Alternative HealthResponse structure (used by ECGAPIClient)
+/// </summary>
+[Serializable]
+public class HealthResponse
+{
+    public string status;
+    public bool model_loaded;
+    public bool simulation_mode;
+    public CacheStats cache_stats;
+}
+
+[Serializable]
+public class CacheStats
+{
+    public int hits;
+    public int misses;
+    public float hit_rate;
+}
+
 // ============================================================================
 // ERROR RESPONSE
 // ============================================================================
@@ -213,6 +233,21 @@ public class ErrorResponse
     public string error;                   // Error message
     public string request_id;              // Request ID for debugging
     public int status_code;                // HTTP status code
+}
+
+// ============================================================================
+// REQUEST STRUCTURES
+// ============================================================================
+
+/// <summary>
+/// Request payload for /api/ecg/analyze endpoint
+/// </summary>
+[Serializable]
+public class ECGAnalyzeRequest
+{
+    public List<List<float>> ecg_signal;
+    public string output_mode;
+    public string region_focus;
 }
 
 // ============================================================================

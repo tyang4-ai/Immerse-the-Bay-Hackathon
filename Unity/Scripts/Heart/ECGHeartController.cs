@@ -341,17 +341,5 @@ public class ECGHeartController : MonoBehaviour
     }
 }
 
-/// <summary>
-/// Wrapper classes for Unity JsonUtility parsing
-/// </summary>
-[System.Serializable]
-public class ECGDataWrapper
-{
-    public ECGData data;
-}
-
-[System.Serializable]
-public class ECGData
-{
-    public List<List<float>> ecg_signal;
-}
+// ECGDataWrapper and ECGData classes are now defined in ECGDataStructures.cs
+// (removed duplicate definitions)
