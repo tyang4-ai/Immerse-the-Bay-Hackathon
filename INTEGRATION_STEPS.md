@@ -52,10 +52,20 @@ You need to create a GameObject that contains the ECG heart visualization system
 
 1. In your scene hierarchy, **Right-click → Create Empty**
 2. Name it **"ECG Heart System"**
-3. Add the **ECGHeartController** component:
-   - Select "ECG Heart System" GameObject
+3. Add **TWO** components to this GameObject:
+
+   **Component 1: ECGAPIClient**
    - In Inspector, click **Add Component**
+   - Type "ECGAPIClient" and select it
+   - Configure:
+     - Backend URL: `http://localhost:5000`
+     - Timeout Seconds: 30
+     - Log Requests: ✓ (checked)
+
+   **Component 2: ECGHeartController**
+   - In Inspector, click **Add Component** again
    - Type "ECGHeartController" and select it
+   - (We'll configure this in Step 6)
 
 ---
 
@@ -124,12 +134,10 @@ lv:          (-0.3, 0.1, 0.1) # Left ventricle
 
 ---
 
+
 ### Step 5: Configure ECGHeartController
 
 Select "ECG Heart System" and configure the **ECGHeartController** component:
-
-#### API Client
-1. Drag the **ECG Heart System** GameObject into the **Api Client** field (it will find the ECGAPIClient singleton)
 
 #### ECG Data
 1. In the **Ecg Data File** field:
@@ -156,7 +164,7 @@ Find the GameObject that has your **BodyToggleInteraction** script:
 2. In the Inspector, find the **BodyToggleInteraction** component
 3. You'll see new fields:
    - **Ecg Heart Controller:** Drag the "ECG Heart System" GameObject here
-   - **Use ECG System:** Check this box to enable (or uncheck to use old toggle behavior)
+   - **Use ECG System:** ✓ Check this box to enable (or uncheck to use old toggle behavior)
 
 ---
 
@@ -179,13 +187,7 @@ The ECG analysis requires a Flask backend server to be running:
    ```
 5. You should see: `Running on http://127.0.0.1:5000`
 
-#### Configure API URL in Unity
-
-1. Select "ECG Heart System" GameObject
-2. Find the **ECGAPIClient** component (it's a singleton, might be on the same object)
-3. Set **Base URL** to:
-   - `http://localhost:5000` (for PC testing)
-   - `http://YOUR_PC_IP:5000` (for Quest 2 deployment)
+**Note:** The Backend URL was already configured in Step 5 when you added the ECGAPIClient component!
 
 ---
 
