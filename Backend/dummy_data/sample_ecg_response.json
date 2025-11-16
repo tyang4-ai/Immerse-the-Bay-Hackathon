@@ -1,0 +1,113 @@
+{
+  "predictions": {
+    "1st_degree_AV_block": 0.05,
+    "RBBB": 0.12,
+    "LBBB": 0.03,
+    "sinus_bradycardia": 0.78,
+    "atrial_fibrillation": 0.10,
+    "sinus_tachycardia": 0.15
+  },
+  "heart_rate": {
+    "bpm": 52.3,
+    "rr_intervals_ms": [1148.0, 1152.5, 1145.0, 1150.0, 1147.5, 1151.0, 1149.0, 1146.5],
+    "beat_timestamps": [0.5, 1.65, 2.8, 3.95, 5.1, 6.25, 7.4, 8.55, 9.7],
+    "r_peak_count": 9
+  },
+  "region_health": {
+    "sa_node": {
+      "severity": 0.5,
+      "color": [1.0, 0.65, 0.0],
+      "activation_delay_ms": 0,
+      "affected_by": ["sinus_bradycardia"]
+    },
+    "ra": {
+      "severity": 0.2,
+      "color": [0.8, 1.0, 0.0],
+      "activation_delay_ms": 25,
+      "affected_by": ["sinus_bradycardia"]
+    },
+    "la": {
+      "severity": 0.2,
+      "color": [0.8, 1.0, 0.0],
+      "activation_delay_ms": 30,
+      "affected_by": ["sinus_bradycardia"]
+    },
+    "av_node": {
+      "severity": 0.3,
+      "color": [0.9, 1.0, 0.0],
+      "activation_delay_ms": 50,
+      "affected_by": ["1st_degree_AV_block"]
+    },
+    "bundle_his": {
+      "severity": 0.15,
+      "color": [0.6, 1.0, 0.0],
+      "activation_delay_ms": 150,
+      "affected_by": ["1st_degree_AV_block"]
+    },
+    "rbbb": {
+      "severity": 0.12,
+      "color": [0.48, 1.0, 0.0],
+      "activation_delay_ms": 160,
+      "affected_by": ["RBBB"]
+    },
+    "lbbb": {
+      "severity": 0.03,
+      "color": [0.12, 1.0, 0.0],
+      "activation_delay_ms": 160,
+      "affected_by": ["LBBB"]
+    },
+    "purkinje": {
+      "severity": 0.08,
+      "color": [0.32, 1.0, 0.0],
+      "activation_delay_ms": 180,
+      "affected_by": ["RBBB"]
+    },
+    "rv": {
+      "severity": 0.084,
+      "color": [0.336, 1.0, 0.0],
+      "activation_delay_ms": 200,
+      "affected_by": ["RBBB"]
+    },
+    "lv": {
+      "severity": 0.021,
+      "color": [0.084, 1.0, 0.0],
+      "activation_delay_ms": 200,
+      "affected_by": ["LBBB"]
+    }
+  },
+  "activation_sequence": [
+    ["sa_node", 0],
+    ["ra", 25],
+    ["la", 30],
+    ["av_node", 50],
+    ["bundle_his", 150],
+    ["rbbb", 160],
+    ["lbbb", 160],
+    ["purkinje", 180],
+    ["rv", 200],
+    ["lv", 200]
+  ],
+  "llm_interpretation": {
+    "plain_english_summary": "Your heart is beating slower than normal (bradycardia) with a slightly delayed signal between the upper and lower chambers.",
+    "severity_assessment": {
+      "overall": "low",
+      "regions": {
+        "most_affected_region": "sa_node",
+        "severity_explanation": "The SA node (natural pacemaker) is firing slowly but regularly. This is often normal in athletes or during rest."
+      }
+    },
+    "patient_explanation": "Sinus bradycardia means your heart is beating slower than 60 beats per minute (yours is at 52 BPM). The 'sinus' part means the rhythm is coming from the correct location - your SA node (the heart's natural pacemaker). This is often completely normal, especially if you're athletic or at rest. The slight AV block detected (5% probability) indicates a minimal delay in electrical conduction, which is usually benign. You're not experiencing any dangerous arrhythmias like atrial fibrillation.",
+    "clinical_notes": "ECG findings: Sinus bradycardia (52 BPM) with possible first-degree AV block (low probability 5%). Regular rhythm maintained. No evidence of bundle branch blocks (RBBB 12%, LBBB 3% - below clinical threshold). No atrial fibrillation detected. Recommend: monitoring if patient is symptomatic, otherwise likely physiologic bradycardia.",
+    "visualization_suggestions": {
+      "highlight_regions": ["sa_node", "av_node", "ra", "la"],
+      "recommended_view": "electrical_pathway",
+      "animation_speed": "slow",
+      "color_emphasis": "Emphasize SA node (orange/yellow) to show the slow pacemaker activity. Keep most regions green to indicate overall healthy conduction."
+    }
+  },
+  "top_condition": "sinus_bradycardia",
+  "confidence": 0.78,
+  "processing_time_ms": 245.6,
+  "model_version": "1.0.0",
+  "timestamp": "2025-11-15T03:30:00Z"
+}

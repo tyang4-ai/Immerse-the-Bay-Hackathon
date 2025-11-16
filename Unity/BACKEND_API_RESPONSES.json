@@ -1,0 +1,612 @@
+{
+  "_comment": "HoloHuman XR - Complete Backend API Response Reference",
+  "_description": "Example responses from all 7 backend endpoints for Unity integration",
+  "_backend_url": "http://localhost:5000 (PC) or http://10.32.86.82:5000 (Quest 2)",
+  "_documentation": "See Backend/API_INTEGRATION_GUIDE.md for complete details",
+
+  "1_ECG_ANALYSIS": {
+    "_endpoint": "POST /api/ecg/analyze",
+    "_description": "Full ECG analysis with 10-region cardiac mapping",
+    "_use_case": "Primary endpoint for diagnosis and heart visualization",
+    "_performance": "~260ms",
+
+    "request": {
+      "ecg_signal": "[[...4096 samples...], [...], ...] (4096x12 array)",
+      "output_mode": "clinical_expert",
+      "region_focus": "rbbb"
+    },
+
+    "response": {
+      "predictions": {
+        "1st_degree_AV_block": 0.05,
+        "RBBB": 0.89,
+        "LBBB": 0.02,
+        "sinus_bradycardia": 0.12,
+        "atrial_fibrillation": 0.01,
+        "sinus_tachycardia": 0.03
+      },
+
+      "diagnosis": {
+        "top_condition": "RBBB",
+        "confidence": 0.89,
+        "all_probabilities": {
+          "RBBB": 0.89,
+          "sinus_bradycardia": 0.12,
+          "1st_degree_AV_block": 0.05,
+          "sinus_tachycardia": 0.03,
+          "LBBB": 0.02,
+          "atrial_fibrillation": 0.01
+        }
+      },
+
+      "heart_rate": {
+        "bpm": 52.3,
+        "lead_used": "II",
+        "lead_quality": 0.98,
+        "fallback_triggered": false,
+        "rr_intervals_ms": [831.5, 829.0, 833.2, 830.8]
+      },
+
+      "region_health": {
+        "sa_node": {
+          "severity": 0.0,
+          "color": [0.0, 1.0, 0.0],
+          "activation_delay_ms": 0,
+          "affected_by": []
+        },
+        "ra": {
+          "severity": 0.0,
+          "color": [0.0, 1.0, 0.0],
+          "activation_delay_ms": 25,
+          "affected_by": []
+        },
+        "la": {
+          "severity": 0.0,
+          "color": [0.0, 1.0, 0.0],
+          "activation_delay_ms": 30,
+          "affected_by": []
+        },
+        "av_node": {
+          "severity": 0.05,
+          "color": [0.2, 1.0, 0.0],
+          "activation_delay_ms": 50,
+          "affected_by": ["1st_degree_AV_block"]
+        },
+        "bundle_his": {
+          "severity": 0.05,
+          "color": [0.2, 1.0, 0.0],
+          "activation_delay_ms": 150,
+          "affected_by": ["1st_degree_AV_block"]
+        },
+        "rbbb": {
+          "severity": 0.89,
+          "color": [1.0, 0.0, 0.0],
+          "activation_delay_ms": 320,
+          "affected_by": ["RBBB"]
+        },
+        "lbbb": {
+          "severity": 0.0,
+          "color": [0.0, 1.0, 0.0],
+          "activation_delay_ms": 160,
+          "affected_by": []
+        },
+        "purkinje": {
+          "severity": 0.445,
+          "color": [1.0, 0.5, 0.0],
+          "activation_delay_ms": 250,
+          "affected_by": ["RBBB"]
+        },
+        "rv": {
+          "severity": 0.623,
+          "color": [1.0, 0.35, 0.0],
+          "activation_delay_ms": 360,
+          "affected_by": ["RBBB"]
+        },
+        "lv": {
+          "severity": 0.0,
+          "color": [0.0, 1.0, 0.0],
+          "activation_delay_ms": 200,
+          "affected_by": []
+        }
+      },
+
+      "activation_sequence": [
+        ["sa_node", 0],
+        ["ra", 25],
+        ["la", 30],
+        ["av_node", 50],
+        ["bundle_his", 150],
+        ["rbbb", 320],
+        ["lbbb", 160],
+        ["purkinje", 250],
+        ["rv", 360],
+        ["lv", 200]
+      ],
+
+      "clinical_interpretation": "The ECG demonstrates a right bundle branch block (RBBB) with 89% confidence. This indicates a delay in electrical conduction through the right bundle branch, causing delayed activation of the right ventricle. The SA node initiates the impulse normally, and conduction proceeds through both atria without issue. However, after passing through the AV node and Bundle of His, the electrical signal encounters a block in the right bundle branch pathway. As a result, the right ventricle must be activated indirectly through the left bundle branch and interventricular septum, causing a significant delay (320ms vs normal 160ms). This manifests as a widened QRS complex on the ECG. The patient's heart rate is 52.3 BPM, indicating mild bradycardia. Clinical correlation is recommended.",
+
+      "processing_time_ms": 267.4,
+      "model_version": "1.0.0",
+      "timestamp": "2025-11-15T19:30:00Z",
+      "request_id": "REQ-A7B3F2E1"
+    },
+
+    "_unity_integration": {
+      "update_region_colors": "Use region_health dict to update CardiacRegionMarker colors",
+      "animate_electrical_wave": "Use activation_sequence array with timing delays",
+      "display_diagnosis": "Show diagnosis.top_condition and confidence as UI text",
+      "display_heart_rate": "Show heart_rate.bpm and lead_used",
+      "color_mapping": {
+        "green": "severity 0.0-0.3 (healthy)",
+        "yellow": "severity 0.3-0.6 (moderate)",
+        "orange": "severity 0.6-0.8 (concerning)",
+        "red": "severity 0.8-1.0 (critical)"
+      }
+    }
+  },
+
+  "2_STORYTELLING_MODE": {
+    "_endpoint": "POST /api/ecg/analyze (with output_mode='storytelling')",
+    "_description": "VR narrative journey through cardiac regions",
+    "_use_case": "Educational VR experience with waypoints",
+    "_performance": "~260ms",
+
+    "request": {
+      "ecg_signal": "[[...]]",
+      "output_mode": "storytelling",
+      "region_focus": "rbbb"
+    },
+
+    "response": {
+      "storytelling_narrative": {
+        "location_name": "The Right Bundle Branch - A Blocked Pathway",
+
+        "narrative": "You find yourself standing in the Right Bundle Branch, one of the heart's critical electrical highways. This pathway should be a bustling conduit of electrical signals racing toward the right ventricle, but something is wrong.\n\nThe usual river of electrical impulses has slowed to a trickle. Where signals should flow freely at 160 milliseconds, you observe a concerning delay—the electrical wave doesn't arrive here until 320 milliseconds after the SA node fires. The pathway ahead appears constricted, forcing the electrical signals to find alternate routes through the interventricular septum.\n\nAround you, the normally synchronized electrical pulses are arriving late and weak. The right ventricle below must wait in darkness, depending on indirect activation from its companion, the left ventricle. This delay creates the characteristic wide QRS complex visible on the surface ECG—a signature of right bundle branch block.\n\nThe atmosphere here feels sluggish and concerning. While the SA node at the heart's summit continues its faithful rhythm, and the left side of the conduction system hums with normal activity, this blocked pathway creates a dangerous asymmetry in the heart's electrical symphony.",
+
+        "waypoints": [
+          {
+            "region": "av_node",
+            "teaser": "Where the signal first slowed down",
+            "description": "The AV node shows mild delay (50ms), contributing to the overall conduction time"
+          },
+          {
+            "region": "bundle_his",
+            "teaser": "The fork in the road",
+            "description": "The Bundle of His splits the signal toward both bundle branches—one path flows freely, the other is blocked"
+          },
+          {
+            "region": "rbbb",
+            "teaser": "The blocked pathway",
+            "description": "RIGHT BUNDLE BRANCH BLOCK: Critical 160ms delay (320ms vs normal 160ms). Electrical signals cannot pass efficiently"
+          },
+          {
+            "region": "lbbb",
+            "teaser": "The healthy twin",
+            "description": "The left bundle branch functions normally (160ms), creating stark contrast with its blocked sibling"
+          },
+          {
+            "region": "rv",
+            "teaser": "The waiting ventricle",
+            "description": "The right ventricle must wait 360ms for indirect activation, compared to 200ms for the left ventricle"
+          }
+        ],
+
+        "atmosphere": {
+          "lighting": "dim red pulse on the right side, normal blue on the left",
+          "sound": "slow, irregular heartbeat with echo delay on right-side beats",
+          "particles": "electrical sparks struggling through the blocked pathway",
+          "camera_focus": "Right bundle branch with highlighted delay visualization"
+        },
+
+        "educational_notes": [
+          "RBBB severity: 89% (critical)",
+          "Primary symptom: Widened QRS complex (>120ms)",
+          "Hemodynamic impact: Mild - right ventricle still contracts, just delayed",
+          "Clinical significance: May indicate underlying heart disease, requires monitoring"
+        ]
+      },
+
+      "diagnosis": {
+        "top_condition": "RBBB",
+        "confidence": 0.89
+      },
+
+      "region_health": {
+        "_comment": "Same as clinical_expert mode - all 10 regions included"
+      }
+    },
+
+    "_unity_integration": {
+      "display_narrative": "Show storytelling_narrative.narrative in VR UI panel",
+      "create_waypoints": "Instantiate waypoint prefabs at each region from waypoints array",
+      "set_atmosphere": "Apply lighting, sound, and particle effects from atmosphere object",
+      "interactive_journey": "Allow user to click waypoints to drill down recursively"
+    }
+  },
+
+  "3_BEAT_DETECTION": {
+    "_endpoint": "POST /api/ecg/beats",
+    "_description": "Fast R-peak detection for timeline UI",
+    "_use_case": "VR timeline scrubbing - show all beat positions",
+    "_performance": "~50ms (81% faster than full analysis)",
+
+    "request": {
+      "ecg_signal": "[[...4096 samples...]]"
+    },
+
+    "response": {
+      "r_peaks": [30, 357, 690, 1023, 1357, 1690, 2023, 2357, 2690, 3023, 3357, 3690, 4023],
+      "beat_count": 13,
+      "avg_rr_interval_ms": 831.5,
+      "rhythm_classification": "regular",
+      "rhythm_regularity": 0.98,
+      "lead_used": "II",
+      "lead_quality": 1.0,
+      "processing_time_ms": 50.13,
+      "timestamp": "2025-11-15T19:30:00Z"
+    },
+
+    "_unity_integration": {
+      "create_timeline_markers": "Convert r_peaks sample indices to time: time_sec = r_peak / 400",
+      "beat_positions": [
+        "Beat 0: 30/400 = 0.075s",
+        "Beat 1: 357/400 = 0.893s",
+        "Beat 2: 690/400 = 1.725s",
+        "...13 beats total over 10.24 seconds"
+      ],
+      "rhythm_indicator": "Show 'Regular' or 'Irregular' based on rhythm_classification",
+      "timeline_scrubbing": "User can scrub to any beat position for detail view"
+    }
+  },
+
+  "4_BEAT_DETAIL": {
+    "_endpoint": "POST /api/ecg/beat/2",
+    "_description": "Single beat waveform analysis with P-QRS-T detection",
+    "_use_case": "Beat detail panel when user focuses on specific beat",
+    "_performance": "~52ms (78% faster than full analysis)",
+
+    "request": {
+      "ecg_signal": "[[...]]",
+      "beat_index": 2
+    },
+
+    "response": {
+      "beat_index": 2,
+      "r_peak_sample": 690,
+      "r_peak_time_ms": 1725.0,
+
+      "waveform_components": {
+        "p_wave": {
+          "onset_sample": 630,
+          "peak_sample": 640,
+          "offset_sample": 660,
+          "amplitude": 0.15,
+          "duration_ms": 75.0
+        },
+        "qrs_complex": {
+          "onset_sample": 670,
+          "peak_sample": 690,
+          "offset_sample": 720,
+          "amplitude": 1.2,
+          "duration_ms": 125.0
+        },
+        "t_wave": {
+          "onset_sample": 740,
+          "peak_sample": 769,
+          "offset_sample": 769,
+          "amplitude": 0.3,
+          "duration_ms": 72.5
+        }
+      },
+
+      "intervals": {
+        "pr_interval_ms": 100.0,
+        "qrs_duration_ms": 125.0,
+        "qt_interval_ms": 247.5,
+        "qt_corrected_ms": 280.3
+      },
+
+      "raw_samples": {
+        "lead_II": [0.02, 0.05, 0.12, 0.25, "...(160 samples total, ±200ms window)"],
+        "sample_range": "630-790 (±80 samples at 400Hz)",
+        "time_range_ms": "1575.0-1975.0"
+      },
+
+      "annotations": [
+        "Wide QRS complex (125ms > normal 100ms)",
+        "Possible bundle branch block",
+        "Normal P wave morphology",
+        "Normal PR interval"
+      ],
+
+      "lead_used": "II",
+      "processing_time_ms": 51.50,
+      "timestamp": "2025-11-15T19:30:01Z"
+    },
+
+    "_unity_integration": {
+      "display_intervals": "Show PR, QRS, QT in UI panel",
+      "display_annotations": "Show beat-specific medical annotations",
+      "visualize_waveform": "Use raw_samples to draw P-QRS-T waveform with LineRenderer",
+      "highlight_components": {
+        "P_wave": "Color: Blue, Time: 1575-1650ms",
+        "QRS_complex": "Color: Red, Time: 1675-1800ms",
+        "T_wave": "Color: Green, Time: 1850-1925ms"
+      }
+    }
+  },
+
+  "5_SEGMENT_ANALYSIS": {
+    "_endpoint": "POST /api/ecg/segment",
+    "_description": "Time window analysis for VR playback",
+    "_use_case": "Analyze visible portion of timeline during scrubbing",
+    "_performance": "~36ms (87% faster than full analysis)",
+
+    "request": {
+      "ecg_signal": "[[...]]",
+      "start_time_ms": 0.0,
+      "end_time_ms": 2000.0
+    },
+
+    "response": {
+      "segment": {
+        "start_ms": 0.0,
+        "end_ms": 2000.0,
+        "duration_ms": 2000.0,
+        "beats_in_segment": 3,
+        "rhythm_analysis": "Regular sinus rhythm",
+
+        "events": [
+          {
+            "type": "r_peak",
+            "time_ms": 75.0,
+            "sample": 30,
+            "description": "First heartbeat in window"
+          },
+          {
+            "type": "r_peak",
+            "time_ms": 892.5,
+            "sample": 357,
+            "description": "Second heartbeat"
+          },
+          {
+            "type": "r_peak",
+            "time_ms": 1725.0,
+            "sample": 690,
+            "description": "Third heartbeat"
+          }
+        ],
+
+        "lead_used": "II",
+        "avg_rr_interval_ms": 817.5
+      },
+
+      "processing_time_ms": 35.02,
+      "timestamp": "2025-11-15T19:30:02Z"
+    },
+
+    "_unity_integration": {
+      "update_visible_beats": "Show only beats within current timeline view",
+      "rhythm_label": "Display rhythm_analysis in UI",
+      "event_markers": "Create markers for each event in visible window",
+      "scrubbing_optimization": "Request new segment only when user stops scrubbing (debounce 0.5s)"
+    }
+  },
+
+  "6_HEALTH_CHECK": {
+    "_endpoint": "GET /health",
+    "_description": "Server health and status check",
+    "_use_case": "Verify backend connection before starting analysis",
+    "_performance": "<10ms",
+
+    "response": {
+      "status": "healthy",
+      "model_loaded": true,
+      "model_path": "model/model.hdf5",
+      "simulation_mode": false,
+      "llm_mode": "fallback",
+      "api_key_configured": false,
+      "cache_info": {
+        "type": "lru_cache",
+        "max_size": 128,
+        "current_entries": 3,
+        "hit_rate": "60%"
+      },
+      "server_time": "2025-11-15T19:30:00Z",
+      "version": "1.0.0"
+    },
+
+    "_unity_integration": {
+      "connection_test": "Call this endpoint on Unity scene start",
+      "display_status": "Show 'Backend Connected' or 'Backend Offline'",
+      "check_model": "If model_loaded=false, show warning to user",
+      "api_key_notice": "If api_key_configured=false, show 'Using fallback mode (no cost)'"
+    }
+  },
+
+  "7_CACHE_STATS": {
+    "_endpoint": "GET /api/cache/stats",
+    "_description": "Cache performance metrics",
+    "_use_case": "Optional monitoring for developers",
+    "_performance": "<10ms",
+
+    "response": {
+      "cache_info": {
+        "hits": 15,
+        "misses": 10,
+        "maxsize": 128,
+        "currsize": 8,
+        "hit_rate": "60.0%"
+      },
+      "timestamp": "2025-11-15T19:30:03Z"
+    }
+  },
+
+  "_COMPLETE_WORKFLOW_EXAMPLE": {
+    "_description": "Recommended sequence of API calls for Unity VR experience",
+
+    "1_on_scene_start": {
+      "action": "Test backend connection",
+      "endpoint": "GET /health",
+      "success": "Show 'Backend Connected' UI",
+      "failure": "Show 'Cannot connect to backend' error"
+    },
+
+    "2_load_ecg_data": {
+      "action": "Load ECG JSON from Resources folder",
+      "file": "Assets/Resources/sample_normal.json",
+      "parse": "Convert JSON to float[4096, 12] array"
+    },
+
+    "3_full_analysis": {
+      "action": "Analyze ECG and update heart visualization",
+      "endpoint": "POST /api/ecg/analyze",
+      "use_response": {
+        "diagnosis": "Display in UI panel",
+        "heart_rate": "Display BPM",
+        "region_health": "Update all 10 CardiacRegionMarker colors",
+        "activation_sequence": "Start electrical wave animation"
+      }
+    },
+
+    "4_timeline_setup": {
+      "action": "Create VR timeline with beat markers",
+      "endpoint": "POST /api/ecg/beats",
+      "use_response": {
+        "r_peaks": "Create beat marker at each position",
+        "beat_count": "Show total beats (e.g., '13 beats')"
+      }
+    },
+
+    "5_user_scrubs_timeline": {
+      "action": "User drags timeline slider in VR",
+      "debounce": "Wait 0.5s after user stops scrubbing",
+      "endpoint": "POST /api/ecg/beat/{index}",
+      "use_response": {
+        "intervals": "Show PR, QRS, QT intervals",
+        "annotations": "Show medical notes for this beat",
+        "waveform_components": "Visualize P-QRS-T with LineRenderer"
+      }
+    },
+
+    "6_storytelling_mode": {
+      "action": "User clicks 'Start Journey' button",
+      "endpoint": "POST /api/ecg/analyze (storytelling mode)",
+      "use_response": {
+        "narrative": "Display in VR UI panel",
+        "waypoints": "Create 3D waypoint markers at cardiac regions",
+        "atmosphere": "Set lighting, particles, sound effects"
+      }
+    },
+
+    "7_recursive_journey": {
+      "action": "User clicks waypoint to drill down",
+      "endpoint": "POST /api/ecg/analyze (storytelling, region_focus=clicked_region)",
+      "result": "New narrative focused on that specific region"
+    }
+  },
+
+  "_COLOR_SEVERITY_MAPPING": {
+    "_description": "How to convert backend severity scores to Unity colors",
+
+    "severity_ranges": {
+      "0.0_to_0.3": {
+        "label": "Healthy",
+        "color_rgb": [0.0, 1.0, 0.0],
+        "color_hex": "#00FF00",
+        "unity_color": "Color.green",
+        "glow_intensity": "Low (0.5-1.0)"
+      },
+      "0.3_to_0.6": {
+        "label": "Moderate",
+        "color_rgb": [1.0, 1.0, 0.0],
+        "color_hex": "#FFFF00",
+        "unity_color": "Color.yellow",
+        "glow_intensity": "Medium (1.0-2.0)"
+      },
+      "0.6_to_0.8": {
+        "label": "Concerning",
+        "color_rgb": [1.0, 0.5, 0.0],
+        "color_hex": "#FF8000",
+        "unity_color": "new Color(1f, 0.5f, 0f)",
+        "glow_intensity": "High (2.0-2.5)"
+      },
+      "0.8_to_1.0": {
+        "label": "Critical",
+        "color_rgb": [1.0, 0.0, 0.0],
+        "color_hex": "#FF0000",
+        "unity_color": "Color.red",
+        "glow_intensity": "Very High (2.5-3.0)"
+      }
+    },
+
+    "example_code": "Color regionColor = new Color(health.color[0], health.color[1], health.color[2]); light.color = regionColor; light.intensity = health.severity * 3f;"
+  },
+
+  "_ERROR_RESPONSES": {
+    "_description": "Error responses you may encounter",
+
+    "invalid_ecg_shape": {
+      "status": 400,
+      "response": {
+        "error": "Invalid ECG signal shape. Expected (4096, 12), got (2048, 12)",
+        "error_id": "ERR-XR-A3F5B2",
+        "details": "ECG signal must be exactly 4096 samples × 12 leads"
+      }
+    },
+
+    "beat_index_out_of_range": {
+      "status": 400,
+      "response": {
+        "error": "Beat index 999 out of range. Valid range: 0-12 (13 beats detected)",
+        "error_id": "ERR-XR-B7C2D9",
+        "beat_count": 13
+      }
+    },
+
+    "backend_offline": {
+      "status": "Network error",
+      "response": "Connection refused on http://localhost:5000",
+      "fix": "Start Flask server: cd Backend && python ecg_api.py"
+    }
+  },
+
+  "_PERFORMANCE_TARGETS": {
+    "_description": "API response time targets for Quest 2 VR (72 FPS = 13.9ms frame budget)",
+
+    "endpoints": {
+      "full_analysis": {
+        "target": "<300ms",
+        "achieved": "260ms",
+        "frames_at_72fps": 19,
+        "acceptable": "Yes - not called every frame"
+      },
+      "beat_detection": {
+        "target": "<100ms",
+        "achieved": "50ms",
+        "frames_at_72fps": 4,
+        "acceptable": "Yes - called once on scene start"
+      },
+      "beat_detail": {
+        "target": "<100ms",
+        "achieved": "52ms",
+        "frames_at_72fps": 4,
+        "acceptable": "Yes - debounced during scrubbing"
+      },
+      "segment": {
+        "target": "<100ms",
+        "achieved": "36ms",
+        "frames_at_72fps": 3,
+        "acceptable": "Yes - debounced during scrubbing"
+      }
+    },
+
+    "optimization_tips": [
+      "Cache API responses - don't call same endpoint repeatedly",
+      "Debounce timeline scrubbing - wait 0.5s before calling beat detail",
+      "Use coroutines - don't block main Unity thread",
+      "Show loading indicators during API calls",
+      "Preload all 3 sample ECGs on scene start for instant switching"
+    ]
+  }
+}

@@ -3,27 +3,7 @@
     "allow": [
       "Bash(mkdir:*)",
       "Bash(chmod:*)",
-      "Bash(python -m json.tool:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\nAdd comprehensive backend-frontend documentation and ECG model setup\n\nAdded:\n- Backend-frontend connection documentation with complete integration guide\n- ECG analysis model repository (automatic-ecg-diagnosis)\n- Backend folder structure for Flask API development\n- Detailed architecture diagrams and data flow specifications\n- Complete code templates for Unity-Flask integration\n- Animation system documentation (heartbeat, color transitions, layer peeling)\n- Performance optimization guide for Quest 2 VR (72 FPS target)\n- Sponsor tool integration workflows (Meshy.ai, SecureMR, Afference, CapCut)\n- Comprehensive troubleshooting guide\n- Development timeline with 10-phase implementation schedule\n\nDocumentation includes:\n- Flask API endpoint specifications with JSON schemas\n- Unity C# class templates for HTTP communication\n- MaterialPropertyBlock best practices for VR performance\n- DOTween animation patterns\n- Complete error handling strategies\n- Network optimization for VR applications\n\nReady for tomorrow''s main development phase.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
-      "Bash(git push:*)",
-      "Bash(curl:*)",
-      "Bash(cat:*)",
-      "Bash(pip install:*)",
-      "Bash(python:*)",
-      "Bash(git add:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\nAdd ECG test data infrastructure and synthetic data generator\n\nBackend Test Data Setup:\n- Backend/data/README.md: Comprehensive guide for ECG test data\n  - Instructions to download real dataset from Zenodo (160MB)\n  - Synthetic ECG generation for immediate testing\n  - Dataset details and format specifications\n  - API testing examples with curl and Python\n  \n- Backend/data/generate_test_ecg.py: Synthetic ECG generator\n  - Creates realistic 12-lead ECG signals\n  - Generates 3 test files: normal (72 BPM), bradycardia (50 BPM), tachycardia (110 BPM)\n  - API-ready JSON format\n  - No external dataset download required\n  \n- Backend/data/download_ecg_samples.py: Zenodo dataset downloader (optional)\n  - Downloads full 160MB dataset from Zenodo\n  - Extracts 10 sample ECGs for testing\n  - Creates sample annotations\n  \nUpdated .gitignore:\n- Exclude large HDF5 files (already covered by *.hdf5)\n- Exclude synthetic test JSON files\n- Exclude temporary ECG data files\n\nRationale:\nThe full ECG dataset (160MB) exceeds GitHub''s 100MB file size limit, so it cannot\nbe committed directly. Instead, we provide:\n1. Synthetic ECG generator for immediate testing (no download needed)\n2. Manual download instructions for real dataset\n3. Dummy data in Backend/dummy_data/ for Unity development\n\nDevelopers can now:\n- Generate test ECG data instantly: python Backend/data/generate_test_ecg.py\n- Download real data manually: https://zenodo.org/record/3625006\n- Use dummy data for Unity: Backend/dummy_data/*.json\n\nAll approaches support full backend API testing and development.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
-      "Bash(git check-ignore:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\nAdd pre-trained ECG model to repository\n\nBackend/model/model.hdf5:\n- Pre-trained TensorFlow/Keras ECG classification model\n- Size: 25.8 MB (under GitHub''s 100MB limit)\n- Source: https://zenodo.org/record/4916206\n- Paper: \"Automatic diagnosis of the 12-lead ECG using a deep neural network\"\n  https://www.nature.com/articles/s41467-020-15432-4\n\nModel Details:\n- Architecture: ResNet-based deep neural network\n- Input: (batch_size, 4096, 12) - 12-lead ECG signals\n- Output: (batch_size, 6) - 6 cardiac condition probabilities\n- Conditions detected:\n  1. 1st degree AV block\n  2. Right bundle branch block (RBBB)\n  3. Left bundle branch block (LBBB)\n  4. Sinus bradycardia\n  5. Atrial fibrillation\n  6. Sinus tachycardia\n\nUpdated .gitignore:\n- Added exception rule to allow Backend/model/model.hdf5\n- Other HDF5 files (dataset files) remain excluded\n\nThis model is essential for backend API functionality and is ready to use\nwithout any additional downloads.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
-      "Bash(git ls-tree:*)",
-      "Bash(git commit:*)",
-      "Bash(git fetch:*)",
-      "Bash(git checkout:*)",
-      "Bash(git merge:*)",
-      "Bash(./venv/Scripts/python.exe:*)",
-      "SlashCommand(/dev-docs-update Session completed: Fixed Unity compilation errors by creating ECGDataStructures.cs and removing duplicate class definitions. All Unity scripts ready for deployment. User about to restart PC.)",
-      "SlashCommand(/dev-docs-update:*)",
-      "Bash(git init:*)",
-      "Bash(git remote add:*)"
+      "Bash(python -m json.tool:*)"
     ],
     "deny": [],
     "ask": []
