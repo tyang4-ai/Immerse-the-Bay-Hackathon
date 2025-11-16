@@ -13,18 +13,45 @@ using System.Collections.Generic;
 
 /// <summary>
 /// Complete ECG analysis response from /api/ecg/analyze endpoint
+/// MATCHES ACTUAL BACKEND RESPONSE FORMAT (ecg_api.py lines 270-288)
 /// </summary>
 [Serializable]
 public class ECGAnalysisResponse
 {
-    public DiagnosisData diagnosis;
+    // Direct fields from backend
+    public Dictionary<string, float> predictions;   // Raw model predictions
     public HeartRateData heart_rate;
     public Dictionary<string, RegionHealthData> region_health;
     public List<List<object>> activation_sequence;
-    public string clinical_interpretation;
-    public StorytellingResponse storytelling;
+    public LLMInterpretation llm_interpretation;    // Changed from clinical_interpretation
+    public string top_condition;                     // Top-level field, not in diagnosis
+    public float confidence;                         // Top-level field, not in diagnosis
     public float processing_time_ms;
-    public string request_id;
+    public string model_version;
+    public string timestamp;
+    public ResponseMetadata metadata;
+
+    // Helper properties for backward compatibility
+    public DiagnosisData diagnosis
+    {
+        get
+        {
+            return new DiagnosisData
+            {
+                top_condition = this.top_condition,
+                confidence = this.confidence,
+                top_conditions = null  // Not provided by backend
+            };
+        }
+    }
+
+    public string clinical_interpretation
+    {
+        get
+        {
+            return llm_interpretation?.clinical_summary ?? "";
+        }
+    }
 }
 
 /// <summary>
@@ -49,14 +76,18 @@ public class ConditionProbability
 }
 
 /// <summary>
-/// Heart rate data with lead quality
+/// Heart rate data with lead quality (matches backend ecg_heartrate_analyzer.py)
 /// </summary>
 [Serializable]
 public class HeartRateData
 {
     public float bpm;                      // Beats per minute (e.g., 72.3)
+    public List<float> rr_intervals_ms;    // RR intervals in milliseconds
+    public List<float> beat_timestamps;    // Beat timestamps in seconds
+    public int r_peak_count;               // Number of R-peaks detected
     public string lead_used;               // e.g., "Lead_II", "Lead_V1"
     public float lead_quality;             // 0.0-1.0
+    public bool fallback_triggered;        // True if fallback HR detection was used
 }
 
 // ============================================================================
@@ -175,6 +206,79 @@ public class Event
 {
     public string type;
     public float time_ms;
+}
+
+// ============================================================================
+// LLM INTERPRETATION (matches backend clinical_decision_support_llm.py)
+// ============================================================================
+
+[Serializable]
+public class LLMInterpretation
+{
+    public string clinical_summary;                    // Main clinical text
+    public DifferentialDiagnosis differential_diagnosis;  // OBJECT, not string!
+    public RiskAssessment risk_assessment;             // Risk assessment data
+    public RecommendedWorkup recommended_workup;       // Workup recommendations
+    public TreatmentConsiderations treatment_considerations;  // Treatment options
+    public VRVisualizationStrategy vr_visualization_strategy; // VR guidance
+    public string patient_education_summary;           // Patient-friendly summary
+    public StorytellingResponse storytelling;          // Storytelling mode data
+}
+
+[Serializable]
+public class DifferentialDiagnosis
+{
+    public string primary_diagnosis;
+    public List<string> alternative_diagnoses;
+    public string reasoning;
+    public string probability_interpretation;
+}
+
+[Serializable]
+public class RiskAssessment
+{
+    public string urgency;          // "low", "moderate", "high", "critical"
+    public string stroke_risk;
+    public string hemodynamic_stability;
+    public List<string> red_flags;
+}
+
+[Serializable]
+public class RecommendedWorkup
+{
+    public List<string> immediate_tests;
+    public List<string> follow_up_tests;
+    public string specialist_referral;
+}
+
+[Serializable]
+public class TreatmentConsiderations
+{
+    public List<string> pharmacologic;
+    public List<string> non_pharmacologic;
+    public string monitoring_recommendations;
+}
+
+[Serializable]
+public class VRVisualizationStrategy
+{
+    public List<string> focus_regions;
+    public string narrative_approach;
+    public List<string> key_teaching_points;
+}
+
+// ============================================================================
+// RESPONSE METADATA (matches backend ecg_api.py metadata field)
+// ============================================================================
+
+[Serializable]
+public class ResponseMetadata
+{
+    public bool simulation_mode;
+    public bool cache_hit;
+    public string output_mode;
+    public string region_focus;
+    public string request_id;
 }
 
 // ============================================================================

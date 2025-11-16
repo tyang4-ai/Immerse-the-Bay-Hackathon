@@ -77,18 +77,15 @@ public class ECGHeartController : MonoBehaviour
         {
             UpdateStatus("Loading ECG data...", Color.yellow);
 
-            // Parse JSON (using wrapper class to handle Unity's JsonUtility limitations)
-            string jsonText = "{\"data\":" + ecgDataFile.text + "}";
-            ECGDataWrapper wrapper = JsonUtility.FromJson<ECGDataWrapper>(jsonText);
+            // Parse JSON directly (synthetic ECG files already have correct format)
+            ECGData data = Newtonsoft.Json.JsonConvert.DeserializeObject<ECGData>(ecgDataFile.text);
 
-            if (wrapper == null || wrapper.data == null || wrapper.data.ecg_signal == null)
+            if (data == null || data.ecg_signal == null)
             {
                 Debug.LogError("[ECGHeartController] Failed to parse ECG JSON");
                 UpdateStatus("Failed to parse ECG data", Color.red);
                 return;
             }
-
-            ECGData data = wrapper.data;
 
             // Validate dimensions
             int samples = data.ecg_signal.Count;

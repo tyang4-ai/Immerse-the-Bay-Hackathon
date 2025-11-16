@@ -114,7 +114,7 @@ public class StorytellingJourneyController : MonoBehaviour
             regionFocus: focusRegion,
             onSuccess: (response) =>
             {
-                currentStory = response.storytelling;
+                currentStory = response.llm_interpretation?.storytelling;
                 DisplayNarrative();
                 CreateWaypoints();
                 SetAtmosphere(response.diagnosis);

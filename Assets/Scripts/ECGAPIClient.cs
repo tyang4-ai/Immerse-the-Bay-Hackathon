@@ -104,29 +104,71 @@ public class ECGAPIClient : MonoBehaviour
 
             yield return request.SendWebRequest();
 
+            Debug.Log($"[ECG API] Request complete. Result: {request.result}");
+
             if (request.result == UnityWebRequest.Result.Success)
             {
+                Debug.Log($"[ECG API] Response received ({request.downloadHandler.text.Length} bytes)");
+
                 try
                 {
-                    var response = JsonConvert.DeserializeObject<ECGAnalysisResponse>(request.downloadHandler.text);
+                    Debug.Log("[ECG API] Parsing response JSON...");
+                    Debug.Log($"[ECG API] Response preview (first 500 chars): {request.downloadHandler.text.Substring(0, System.Math.Min(500, request.downloadHandler.text.Length))}");
+
+                    ECGAnalysisResponse response = null;
+                    try
+                    {
+                        response = JsonConvert.DeserializeObject<ECGAnalysisResponse>(request.downloadHandler.text);
+                        Debug.Log($"[ECG API] Deserialization completed, response is: {(response == null ? "NULL" : "NOT NULL")}");
+                    }
+                    catch (Exception deserEx)
+                    {
+                        Debug.LogError($"[ECG API] DESERIALIZATION EXCEPTION: {deserEx.Message}");
+                        Debug.LogError($"[ECG API] Stack: {deserEx.StackTrace}");
+                        throw;
+                    }
+
+                    if (response == null)
+                    {
+                        Debug.LogError("[ECG API] Response is NULL after deserialization!");
+                        onError?.Invoke("Response deserialized to null");
+                        yield break;
+                    }
+
+                    Debug.Log($"[ECG API] ✓ Response parsed successfully!");
 
                     if (logRequests)
                     {
-                        Debug.Log($"[ECG API] Analysis complete: {response.diagnosis.top_condition} ({response.diagnosis.confidence:P0})");
-                        Debug.Log($"[ECG API] Heart rate: {response.heart_rate.bpm:F1} BPM");
-                        Debug.Log($"[ECG API] Processing time: {response.processing_time_ms:F1}ms");
+                        Debug.Log("[ECG API] Starting to log response details...");
+                        try
+                        {
+                            Debug.Log($"[ECG API] Analysis complete: {response.diagnosis.top_condition} ({response.diagnosis.confidence:P0})");
+                            Debug.Log($"[ECG API] Heart rate: {response.heart_rate.bpm:F1} BPM");
+                            Debug.Log($"[ECG API] Processing time: {response.processing_time_ms:F1}ms");
+                        }
+                        catch (Exception logEx)
+                        {
+                            Debug.LogError($"[ECG API] Exception while logging response: {logEx.Message}");
+                        }
+                        Debug.Log("[ECG API] Finished logging response details.");
                     }
 
+                    Debug.Log($"[ECG API] onSuccess is: {(onSuccess == null ? "NULL" : "NOT NULL")}");
+                    Debug.Log("[ECG API] Invoking onSuccess callback...");
                     onSuccess?.Invoke(response);
+                    Debug.Log("[ECG API] onSuccess callback invoked!");
                 }
                 catch (Exception e)
                 {
                     Debug.LogError($"[ECG API] Failed to parse response: {e.Message}");
+                    Debug.LogError($"[ECG API] Stack trace: {e.StackTrace}");
+                    Debug.LogError($"[ECG API] Response preview: {request.downloadHandler.text.Substring(0, System.Math.Min(500, request.downloadHandler.text.Length))}");
                     onError?.Invoke($"JSON parsing error: {e.Message}");
                 }
             }
             else
             {
+                Debug.LogError($"[ECG API] Request failed with result: {request.result}");
                 HandleError(request, onError);
             }
         }

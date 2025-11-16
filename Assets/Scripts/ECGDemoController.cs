@@ -18,59 +18,156 @@ public class ECGDemoController : MonoBehaviour
 
     void Start()
     {
-        apiClient = ECGAPIClient.Instance;
-        statusText.text = "Loading ECG data...";
+        Debug.Log("[ECGDemoController] Start() called");
 
+        // Check if UI elements are assigned
+        if (diagnosisText == null || heartRateText == null || statusText == null)
+        {
+            Debug.LogError("[ECGDemoController] UI elements not assigned in Inspector!");
+            return;
+        }
+
+        // Check if ECG data file is assigned
+        if (ecgDataFile == null)
+        {
+            Debug.LogError("[ECGDemoController] ECG Data File not assigned in Inspector!");
+            statusText.text = "ERROR: No ECG file assigned";
+            return;
+        }
+
+        statusText.text = "Initializing...";
+        Debug.Log("[ECGDemoController] Waiting for API client...");
+
+        // Wait for ECGAPIClient to be ready
+        StartCoroutine(WaitForAPIClient());
+    }
+
+    IEnumerator WaitForAPIClient()
+    {
+        // Wait up to 5 seconds for ECGAPIClient to initialize
+        float timeout = 5f;
+        float elapsed = 0f;
+
+        while (ECGAPIClient.Instance == null && elapsed < timeout)
+        {
+            yield return new WaitForSeconds(0.1f);
+            elapsed += 0.1f;
+        }
+
+        if (ECGAPIClient.Instance == null)
+        {
+            Debug.LogError("[ECGDemoController] ECGAPIClient not found! Make sure ECGAPIClient GameObject exists in scene.");
+            statusText.text = "ERROR: API Client not found";
+            yield break;
+        }
+
+        apiClient = ECGAPIClient.Instance;
+        Debug.Log("[ECGDemoController] API client found!");
+
+        statusText.text = "Loading ECG data...";
         LoadECGData();
-        StartCoroutine(AnalyzeECG());
+
+        if (ecgSignal != null)
+        {
+            StartCoroutine(AnalyzeECG());
+        }
     }
 
     void LoadECGData()
     {
-        // Parse JSON
-        var wrapper = JsonUtility.FromJson<ECGWrapper>("{\"data\":" + ecgDataFile.text + "}");
-        var data = wrapper.data;
+        Debug.Log("[ECGDemoController] Loading ECG data from file...");
 
-        int samples = data.ecg_signal.Count;
-        int leads = data.ecg_signal[0].Count;
-
-        ecgSignal = new float[samples, leads];
-        for (int i = 0; i < samples; i++)
+        try
         {
-            for (int j = 0; j < leads; j++)
-            {
-                ecgSignal[i, j] = data.ecg_signal[i][j];
-            }
-        }
+            // Parse JSON - synthetic ECG files have direct {"ecg_signal": [...]} format
+            // Use Newtonsoft.Json for better parsing
+            var data = Newtonsoft.Json.JsonConvert.DeserializeObject<ECGData>(ecgDataFile.text);
 
-        statusText.text = $"Loaded {samples} samples × {leads} leads";
-        Debug.Log($"ECG loaded: {samples} samples × {leads} leads");
+            if (data == null || data.ecg_signal == null)
+            {
+                throw new System.Exception("Failed to parse ECG data - null result");
+            }
+
+            int samples = data.ecg_signal.Count;
+            int leads = data.ecg_signal[0].Count;
+
+            Debug.Log($"[ECGDemoController] Parsing {samples} samples × {leads} leads...");
+
+            ecgSignal = new float[samples, leads];
+            for (int i = 0; i < samples; i++)
+            {
+                for (int j = 0; j < leads; j++)
+                {
+                    ecgSignal[i, j] = data.ecg_signal[i][j];
+                }
+            }
+
+            statusText.text = $"Loaded {samples} samples × {leads} leads";
+            Debug.Log($"[ECGDemoController] ✓ ECG loaded successfully: {samples} samples × {leads} leads");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[ECGDemoController] Failed to load ECG data: {e.Message}");
+            Debug.LogError($"[ECGDemoController] Stack trace: {e.StackTrace}");
+            statusText.text = "ERROR: Failed to load ECG data";
+            ecgSignal = null;
+        }
     }
 
     IEnumerator AnalyzeECG()
     {
+        Debug.Log("[ECGDemoController] Starting ECG analysis...");
         statusText.text = "Analyzing ECG...";
+
+        if (apiClient == null)
+        {
+            Debug.LogError("[ECGDemoController] API client is null!");
+            statusText.text = "ERROR: API client missing";
+            yield break;
+        }
+
+        if (ecgSignal == null)
+        {
+            Debug.LogError("[ECGDemoController] ECG signal is null!");
+            statusText.text = "ERROR: ECG data missing";
+            yield break;
+        }
 
         yield return apiClient.AnalyzeECG(
             ecgSignal,
             outputMode: "clinical_expert",
             onSuccess: (response) =>
             {
-                // Display results
-                diagnosisText.text = $"<b>{response.diagnosis.top_condition}</b>\n" +
-                                    $"Confidence: {response.diagnosis.confidence:P0}";
+                try
+                {
+                    Debug.Log("[ECGDemoController] ✓ SUCCESS callback received!");
+                    Debug.Log($"[ECGDemoController] Response type: {response.GetType().Name}");
 
-                heartRateText.text = $"<b>{response.heart_rate.bpm:F1} BPM</b>\n" +
-                                    $"Lead: {response.heart_rate.lead_used} (Quality: {response.heart_rate.lead_quality:F2})";
+                    // Display results
+                    Debug.Log("[ECGDemoController] Setting diagnosis text...");
+                    diagnosisText.text = $"<b>{response.diagnosis.top_condition}</b>\n" +
+                                        $"Confidence: {response.diagnosis.confidence:P0}";
 
-                statusText.text = $"✓ Analysis complete ({response.processing_time_ms:F0}ms)";
+                    Debug.Log("[ECGDemoController] Setting heart rate text...");
+                    heartRateText.text = $"<b>{response.heart_rate.bpm:F1} BPM</b>\n" +
+                                        $"Lead: {response.heart_rate.lead_used}";
 
-                Debug.Log("=== ECG Analysis Results ===");
-                Debug.Log($"Diagnosis: {response.diagnosis.top_condition} ({response.diagnosis.confidence:P0})");
-                Debug.Log($"Heart Rate: {response.heart_rate.bpm:F1} BPM");
-                Debug.Log($"Processing Time: {response.processing_time_ms:F1}ms");
-                Debug.Log("\nClinical Interpretation:");
-                Debug.Log(response.clinical_interpretation);
+                    Debug.Log("[ECGDemoController] Setting status text...");
+                    statusText.text = $"Analysis complete ({response.processing_time_ms:F0}ms)";
+
+                    Debug.Log("=== ECG Analysis Results ===");
+                    Debug.Log($"Diagnosis: {response.diagnosis.top_condition} ({response.diagnosis.confidence:P0})");
+                    Debug.Log($"Heart Rate: {response.heart_rate.bpm:F1} BPM");
+                    Debug.Log($"Processing Time: {response.processing_time_ms:F1}ms");
+                    Debug.Log("\nClinical Interpretation:");
+                    Debug.Log(response.clinical_interpretation);
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"[ECGDemoController] Exception in onSuccess callback: {e.Message}");
+                    Debug.LogError($"[ECGDemoController] Stack trace: {e.StackTrace}");
+                    statusText.text = $"ERROR in callback: {e.Message}";
+                }
             },
             onError: (error) =>
             {
